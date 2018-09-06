@@ -122,7 +122,7 @@ class Jets::Builders
 
     def extract_gems
       headline "Replacing compiled gems with AWS Lambda Linux compiled versions."
-      GemReplacer.new(Jets::RUBY_VERSION, lambdagem_options).run
+      GemReplacer.new(lambdagem_options).run
     end
 
     # This happens in the current app directory not the tmp app_root for simplicity

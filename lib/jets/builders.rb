@@ -3,4 +3,5 @@ class Jets::Builders
   autoload :HandlerGenerator, "jets/builders/handler_generator"
   autoload :CodeBuilder, "jets/builders/code_builder"
   autoload :GemReplacer, "jets/builders/gem_replacer"
+  autoload :Lazy, "jets/builders/lazy"
 end

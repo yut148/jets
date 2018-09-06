@@ -9,8 +9,8 @@ class Jets::Builders
   class GemReplacer
     extend Memoist
     attr_reader :missing_gems
-    def initialize(ruby_version, options)
-      @ruby_version = ruby_version
+    def initialize(options={})
+      @ruby_version = Jets::RUBY_VERSION
       @options = options
       @missing_gems = [] # keeps track of gems that are not found in any of the lambdagems sources
     end
