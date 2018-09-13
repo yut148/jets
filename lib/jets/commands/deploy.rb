@@ -52,7 +52,12 @@ module Jets::Commands
     def ship(stack_options)
       options = @options.merge(stack_options) # includes stack_type and s3_bucket
       Jets::Commands::Build.new(options).build_templates
-      Jets::Cfn::Ship.new(options).run
+
+      if stack_options[:stack_type] == :full
+        Jets::Cfn::Ship::Full.new(options).run
+      else
+        Jets::Cfn::Ship::Empty.new(options).run
+      end
     end
     time :ship
 
