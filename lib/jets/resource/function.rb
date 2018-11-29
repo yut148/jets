@@ -139,7 +139,7 @@ class Jets::Resource
       map = {
         node: "nodejs8.10",
         python: "python3.6",
-        ruby: "nodejs8.10", # node shim for ruby support
+        ruby: "ruby2.5",
       }
       map[@task.lang]
     end

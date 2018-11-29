@@ -22,11 +22,27 @@ class Jets::Builders
     end
 
     def app_ruby_shims
+      puts "app_ruby_shims".colorize(:yellow)
       app_files.each do |path|
+        puts "path #{path}"
         # Generates one big node shim for a entire controller.
         vars = Jets::Builders::ShimVars::App.new(path)
-        generate_handler(vars)
+        if path.include?('app/functions')
+          # TODO: how to handle different default handle? or maybe add some magic in the ruby definintion
+          copy_simple_function(path)
+        else
+          generate_handler(vars)
+        end
+        # native_function(path, task)
       end
+    end
+
+    # source_path: app/functions/simple.rb
+    def copy_simple_function(source_path)
+      # Handler: handlers/controllers/posts_controller.handle
+      dest_path = source_path.sub('app/functions', 'handlers/functions')
+      FileUtils.mkdir_p(File.dirname(dest_path))
+      FileUtils.cp(source_path, dest_path)
     end
 
     def app_files

@@ -4,7 +4,7 @@ require 'digest'
 # to reference files with the md5 checksum.  The files are the:
 #
 #   jets/code/rack-checksum.zip
-#   jets/code/bundled-checksum.zip
+#   jets/code/opt-checksum.zip
 #
 # We compute the checksums before we generate the node shim handlers.
 class Jets::Builders
@@ -17,7 +17,7 @@ class Jets::Builders
 
       def stage_folders
         paths = []
-        paths << "stage/bundled" if Jets.lazy_load?
+        paths << "stage/opt" if Jets.lazy_load?
         paths << "stage/rack" if Jets.rack?
         # Important to have stage/code at the end, since it will use the other
         # 'symlinked' folders to adjust the md5 hash.
@@ -34,9 +34,11 @@ class Jets::Builders
 
       def dir(short_path)
         path = "#{Jets.build_root}/#{short_path}"
+        puts "md5.rb path #{path}"
         files = Dir["#{path}/**/*"]
         files.reject! { |f| File.directory?(f) }
              .reject! { |f| File.symlink?(f) }
+        # pp files
         content = files.map do |f|
           Digest::MD5.file(f).to_s[0..7]
         end.join

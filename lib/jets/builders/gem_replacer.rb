@@ -20,12 +20,10 @@ class Jets::Builders
       tidy
     end
 
-    def report_missing_gems
-
-    end
-
     # remove unnecessary files to reduce package size
     def tidy
+      # project_root: /tmp/jets/demo/stage/code/
+      # /tmp/jets/demo/stage/code/bundled
       tidy_gems("#{@options[:project_root]}/bundled/gems/ruby/*/gems/*")
       tidy_gems("#{@options[:project_root]}/bundled/gems/ruby/*/bundler/gems/*")
     end

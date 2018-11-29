@@ -22,7 +22,7 @@ class Jets::Builders
       return unless gemfile_exist?
 
       copy_bundled_cache
-      extract_ruby
+      # extract_ruby
       extract_gems
       tidy
     end

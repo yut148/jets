@@ -101,13 +101,19 @@ class Jets::Builders
 
     def create_zip_files
       folders = Md5.stage_folders
+      # Md5.stage_folders ["stage/bundled", "stage/code"]
       folders.each do |folder|
         zip = Md5Zip.new(folder)
         if exist_on_s3?(zip.md5_name)
           puts "Already exists: s3://#{s3_bucket}/jets/code/#{zip.md5_name}"
         else
           zip = Md5Zip.new(folder)
-          zip.create
+          puts "folder #{folder}"
+          if folder.include?("bundled")
+            zip.create_parent
+          else
+            zip.create
+          end
         end
       end
     end
@@ -122,6 +128,15 @@ class Jets::Builders
       end
     end
 
+    # TODO: only do this shuffling if lazy load
+    # Move bundled to opt/bundled folder in preparation for zipping up opt.zip
+    # instead of bundled.zip
+    def move_bundled_under_opt
+      FileUtils.mkdir_p("#{stage_area}/opt") # /tmp/jets/demo/stage/opt
+      # mv /tmp/jets/demo/stage/code/bundled /tmp/jets/demo/stage/opt/bundled
+      FileUtils.mv("#{full(tmp_code)}/bundled", "#{stage_area}/opt/bundled")
+    end
+
     # Moves code/bundled and code/rack to build_root.
     # These files will be packaged separated and lazy loaded as part of the
     # node shim. This keeps the code zipfile smaller in size and helps
@@ -130,13 +145,25 @@ class Jets::Builders
     #
     #   > Each Lambda function receives an additional 512MB of non-persistent disk space in its own /tmp directory. The /tmp directory can be used for loading additional resources like dependency libraries or data sets during function initialization.
     #
-    def setup_tmp
-      tmp_symlink("bundled") if Jets.lazy_load?
+    def setup_symlinks
+      if Jets.lazy_load?
+        symlink_project_gems_to_opt_gems
+        bundled_symlink
+      end
       tmp_symlink("rack")
     end
 
-    def stage_area
-      "#{Jets.build_root}/stage"
+    def bundled_symlink
+      FileUtils.ln_sf("/opt/bundled", "#{stage_area}/code/bundled")
+    end
+
+    # code/vendor/bundle/ruby/2.5.0 => /opt/bundled/gems/ruby/2.5.0
+    def symlink_project_gems_to_opt_gems
+      # Must be at the 2.5.0 folder because ther are other folders like specifications
+      # that are required.
+      vendor = "#{stage_area}/code/vendor/bundle/ruby/2.5.0"
+      FileUtils.mkdir_p(File.dirname(vendor)) # create parent folder
+      FileUtils.ln_sf("/opt/bundled/gems/ruby/2.5.0", vendor)
     end
 
     # Moves folder to a stage folder and create a symlink its place
@@ -157,6 +184,10 @@ class Jets::Builders
       FileUtils.ln_sf("/tmp/#{folder}", "/#{full(tmp_code)}/#{folder}")
     end
 
+    def stage_area
+      "#{Jets.build_root}/stage"
+    end
+
     def code_setup
       reconfigure_development_webpacker
     end
@@ -166,7 +197,8 @@ class Jets::Builders
       store_s3_base_url
       disable_webpacker_middleware
       copy_internal_jets_code
-      setup_tmp
+      move_bundled_under_opt
+      setup_symlinks
       calculate_md5s # must be called before generate_node_shims and create_zip_files
       generate_node_shims
       create_zip_files
@@ -371,7 +403,7 @@ class Jets::Builders
       ruby_packager.install
       reconfigure_rails
       rack_packager.install
-      ruby_packager.finish
+      ruby_packager.finish # by this time we have a /tmp/jets/demo/stage/code/bundled
       rack_packager.finish
     end
 
