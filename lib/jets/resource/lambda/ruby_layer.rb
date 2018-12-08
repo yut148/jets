@@ -9,17 +9,8 @@ module Jets::Resource::Lambda
     end
 
     def code_s3_key
-      # checksum = Jets::Builders::Md5.checksums["stage/opt"]
-      # "jets/code/ruby-#{checksum}.zip" # s3_key
-
-      # Manually uploaded for testing
-      # TODO: remove the hardcode
-      # "jets/code/runtime-e73b3505.zip"
-      "runtime.zip"
-    end
-
-    def s3_bucket
-      "gems-test-2-us-west-2"
+      checksum = Jets::Builders::Md5.checksums["stage/opt"]
+      "jets/code/opt-#{checksum}.zip" # s3_key
     end
   end
 end

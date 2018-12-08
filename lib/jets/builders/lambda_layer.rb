@@ -1,9 +1,19 @@
 class Jets::Builders
   class LambdaLayer
+    LAMBDA_SIZE_LIMIT = 250 # Total lambda limit is 250MB
+
     # Important folders:
     #
     #   stage/code/opt/linux
     #   stage/code/vendor/bundle/ruby/2.5.0/gems
+    #
+    # At this point we gems have all been moved to stage/code/vendor/bundle, this includes
+    # binary gems.  This is a good state. This method moves them:
+    #
+    #   from stage/code/vendor/bundle/ruby/2.5.0
+    #   to stage/opt/ruby/gems/2.5.0
+    #
+    # This is done because we want to get as many gems into the Lambda Layer as possible.
     #
     def build
       code = "#{Jets.build_root}/stage/code"
@@ -27,7 +37,7 @@ class Jets::Builders
       puts "code: #{megabytes(code_size)}"
       puts "opt: #{megabytes(opt_size)}"
       puts "total: #{megabytes(total_size)}"
-      puts "remaining: #{megabytes(125 * 1024 - total_size)}"
+      puts "remaining: #{megabytes(LAMBDA_SIZE_LIMIT * 1024 - total_size)}"
 
       if within_lambda_limit?(total_size)
         puts "Gems Layer Size is within the limit"
@@ -41,9 +51,10 @@ class Jets::Builders
     # Move binary gems but only the gems, leave the .so extensions.
 
     def within_lambda_limit?(total_size)
-      limit_in_mb = 125 # 125MB because jets ruby runtime is 125MB. Total lambda limit is 250MB
-      limit = limit_in_mb - 5 # 5MB buffer
-      total_size < limit * 1024 # 120MB -
+      # Jets Ruby Runtime is about 125MB right now
+      buffer = 5  # 5MB buffer just in case
+      limit = LAMBDA_SIZE_LIMIT - buffer
+      total_size < limit * 1024 # 120MB
     end
 
     def compute_size(path)

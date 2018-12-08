@@ -13,7 +13,7 @@ require "memoist"
 
 module Jets
   # When we update Jets::RUBY_VERSION, need to update jets-gems/base.rb: def jets_ruby_version also
-  RUBY_VERSION = "2.5.0"
+  RUBY_VERSION = "2.5.3"
 
   autoload :Application, "jets/application"
   autoload :AwsInfo, "jets/aws_info"

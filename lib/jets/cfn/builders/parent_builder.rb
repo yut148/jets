@@ -38,9 +38,11 @@ class Jets::Cfn::Builders
       add_resource(resource)
       add_outputs(resource.outputs)
 
-      resource = Jets::Resource::Lambda::GemLayer.new
-      add_resource(resource)
-      add_outputs(resource.outputs)
+      # Comment out for now, using one Ruby layer for now since there's a timeout
+      # combining layers.
+      # resource = Jets::Resource::Lambda::GemLayer.new
+      # add_resource(resource)
+      # add_outputs(resource.outputs)
     end
 
     def build_child_resources

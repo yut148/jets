@@ -18,15 +18,16 @@ class Jets::Builders
       setup_bundle_config
     end
 
-    # build gems in vendor/bundle/ruby/2.5.0 (done in install phase)
-    # remove binary gems in vendor/bundle/ruby/2.5.0
-    # extract binary gems in opt/ruby/gems/2.5.0
-    # move binary gems from opt/ruby/gems/2.5.0 to vendor/bundle/ruby/2.5.0
+    #   build gems in vendor/bundle/ruby/2.5.0 (done in install phase)
+    # replace_compiled_gems:
+    #   remove binary gems in vendor/bundle/ruby/2.5.0
+    #   extract binary gems in opt/ruby/gems/2.5.0
+    #   move binary gems from opt/ruby/gems/2.5.0 to vendor/bundle/ruby/2.5.0
     def finish
       return unless gemfile_exist?
 
       copy_cache_gems
-      # extract_ruby
+      extract_ruby
       replace_compiled_gems
       tidy
     end
@@ -177,7 +178,12 @@ EOL
 
     def extract_ruby
       headline "Setting up a vendored copy of ruby."
-      Jets::Gems::Extract::Ruby.new(Jets::RUBY_VERSION, gems_options).run
+      # Assign source_url differently here because for gems the source url can be
+      # customized and is dynamically computed by GemReplacer.
+      options = gems_options.merge(
+        source_url: "https://gems2.lambdagems.com",
+      )
+      Jets::Gems::Extract::Ruby.new(Jets::RUBY_VERSION, options).run
     end
 
     def replace_compiled_gems

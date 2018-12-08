@@ -18,8 +18,8 @@ class Jets::Builders
       end
 
       # At this point the current compiled gems have been removed and compiled gems
-      # have been unpacked to code/opt. We can take those unpacked gems and fully
-      # replace them safely now.
+      # have been unpacked to code/opt. We can take the unpacked gems in opt and fully
+      # move them into vendor/bundle gems now.
       move_opt_gems_to_vendor
 
       tidy
