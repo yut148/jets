@@ -16,6 +16,7 @@ class Jets::Builders
       gems = "#{Jets.build_root}/stage/opt/ruby/gems/#{ruby_folder}"
       FileUtils.mkdir_p(File.dirname(gems))
       FileUtils.mv(gems_original, gems)
+      # Deleting in this way to make sure folders are empty before we delete them
       FileUtils.rmdir("#{code}/vendor/bundle/ruby")
       FileUtils.rmdir("#{code}/vendor/bundle")
       FileUtils.rmdir("#{code}/vendor") if Dir.empty?("#{code}/vendor")
@@ -23,17 +24,16 @@ class Jets::Builders
       code_size = compute_size(code)
       opt_size = compute_size(opt)
       total_size = opt_size + code_size
+      puts "code: #{megabytes(code_size)}"
+      puts "opt: #{megabytes(opt_size)}"
+      puts "total: #{megabytes(total_size)}"
+      puts "remaining: #{megabytes(125 * 1024 - total_size)}"
 
       if within_lambda_limit?(total_size)
         puts "Gems Layer Size is within the limit"
       else
         raise "lambda layer is too large"
       end
-
-      puts "code: #{megabytes(code_size)}"
-      puts "opt: #{megabytes(opt_size)}"
-      puts "total: #{megabytes(total_size)}"
-      puts "remaining: #{megabytes(125 * 1024 - total_size)}"
     end
 
     # TODO: for lazy gem loading

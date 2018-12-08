@@ -32,6 +32,15 @@ class Jets::Cfn::Builders
       resource = Jets::Resource::Iam::ApplicationRole.new
       add_resource(resource)
       add_outputs(resource.outputs)
+
+      # return unless jets_ruby_layer?
+      resource = Jets::Resource::Lambda::RubyLayer.new
+      add_resource(resource)
+      add_outputs(resource.outputs)
+
+      resource = Jets::Resource::Lambda::LayerVersion.new
+      add_resource(resource)
+      add_outputs(resource.outputs)
     end
 
     def build_child_resources
