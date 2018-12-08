@@ -52,7 +52,7 @@ class Jets::Application
 
     config.gems = ActiveSupport::OrderedOptions.new
     config.gems.sources = [
-      'https://gems.lambdagems.com'
+      'https://gems2.lambdagems.com'
     ]
 
     config.inflections = ActiveSupport::OrderedOptions.new

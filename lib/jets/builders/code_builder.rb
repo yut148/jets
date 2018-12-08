@@ -282,6 +282,7 @@ class Jets::Builders
     # This happens in the current app directory not the tmp code for simplicity.
     # This is because the node and yarn has likely been set up correctly there.
     def compile_assets
+      ENV['JETS_SKIP_ASSETS'] = '1' # HARDCODE FOR NOW
       if ENV['JETS_SKIP_ASSETS']
         puts "Skip compiling assets".colorize(:yellow) # useful for debugging
         return
@@ -398,10 +399,10 @@ class Jets::Builders
     memoize :rack_packager
 
     def package_ruby
-      return if Jets.poly_only?
+      return if Jets.poly_only? # this changes to binary only and then we dont use the jets ruby rutime layer
 
       ruby_packager.install
-      reconfigure_rails
+      reconfigure_rails # since full(tmp_code) is not available
       rack_packager.install
       ruby_packager.finish # by this time we have a /tmp/jets/demo/stage/code/bundled
       rack_packager.finish

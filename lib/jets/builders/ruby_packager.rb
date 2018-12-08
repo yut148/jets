@@ -18,13 +18,19 @@ class Jets::Builders
       setup_bundle_config
     end
 
+    # build gems in vendor/bundle/ruby/2.5.0 (done in install phase)
+    # remove binary gems in vendor/bundle/ruby/2.5.0
+    # extract binary gems in opt/ruby/gems/2.5.0
+    # move binary gems from opt/ruby/gems/2.5.0 to vendor/bundle/ruby/2.5.0
     def finish
       return unless gemfile_exist?
 
-      copy_bundled_cache
+      copy_cache_gems
       # extract_ruby
-      extract_gems
+      replace_compiled_gems
       tidy
+      puts "EARLY EXIT".colorize(:yellow)
+      exit
     end
 
     def gemfile_exist?
@@ -36,7 +42,7 @@ class Jets::Builders
     # If user is on a macosx machine, macosx gems will be installed.
     # If user is on a linux machine, linux gems will be installed.
     #
-    # Copies Gemfile* to /tmp/jetss/demo/bundled folder and installs
+    # Copies Gemfile* to /tmp/jets/demo/cache folder and installs
     # gems with bundle install from there.
     #
     # We take the time to copy Gemfile and bundle into a separate directory
@@ -53,10 +59,11 @@ class Jets::Builders
 
       require "bundler" # dynamically require bundler so user can use any bundler
       Bundler.with_clean_env do
+        puts "cache_area #{cache_area}"
         # cd /tmp/jets/demo
         sh(
           "cd #{cache_area} && " \
-          "env BUNDLE_IGNORE_CONFIG=1 bundle install --path #{cache_area}/bundled/gems --without development test"
+          "env BUNDLE_IGNORE_CONFIG=1 bundle install --path #{cache_area}/vendor/bundle --without development test"
         )
       end
 
@@ -95,7 +102,7 @@ class Jets::Builders
     end
 
     # When using submodules, bundler leaves old submodules behind. Over time this inflates
-    # the size of the the bundled gems.  So we'll clean it up.
+    # the size of the the cache gems.  So we'll clean it up.
     def clean_old_submodules
       # https://stackoverflow.com/questions/38800129/parsing-a-gemfile-lock-with-bundler
       lockfile = "#{cache_area}/Gemfile.lock"
@@ -117,8 +124,8 @@ class Jets::Builders
         md[1] # git_sha
       end
 
-      # IE: /tmp/jets/demo/cache/bundled/gems/ruby/2.5.0/bundler/gems/webpacker-a8c46614c675
-      Dir.glob("#{cache_area}/bundled/gems/ruby/2.5.0/bundler/gems/*").each do |path|
+      # IE: /tmp/jets/demo/cache/vendor/bundle/ruby/2.5.0/bundler/gems/webpacker-a8c46614c675
+      Dir.glob("#{cache_area}/vendor/bundle/ruby/2.5.0/bundler/gems/*").each do |path|
         sha = path.split('-').last[0..6] # only first 7 chars of the git sha
         unless git_shas.include?(sha)
           # puts "Removing old submoduled gem: #{path}" # uncomment to see and debug
@@ -139,7 +146,7 @@ class Jets::Builders
       # Override project's .bundle/config and ensure that .bundle/config matches
       # at these 2 spots:
       #   app_root/.bundle/config
-      #   bundled/gems/.bundle/config
+      #   vendor/bundle/.bundle/config
       cache_bundle_config = "#{cache_area}/.bundle/config"
       app_bundle_config = "#{@full_app_root}/.bundle/config"
       FileUtils.mkdir_p(File.dirname(app_bundle_config))
@@ -153,7 +160,8 @@ class Jets::Builders
     def ensure_build_cache_bundle_config_exists!
       text =<<-EOL
 ---
-BUNDLE_PATH: "bundled/gems"
+BUNDLE_FROZEN: "true"
+BUNDLE_PATH: "vendor/bundle"
 BUNDLE_WITHOUT: "development:test"
 EOL
       bundle_config = "#{cache_area}/.bundle/config"
@@ -174,20 +182,21 @@ EOL
       Jets::Gems::Extract::Ruby.new(Jets::RUBY_VERSION, gems_options).run
     end
 
-    def extract_gems
+    def replace_compiled_gems
       headline "Replacing compiled gems with AWS Lambda Linux compiled versions."
       GemReplacer.new(Jets::RUBY_VERSION, gems_options).run
     end
 
-    def copy_bundled_cache
-      app_root_bundled = "#{@full_app_root}/bundled"
-      if File.exist?(app_root_bundled)
-        puts "Removing current bundled from project"
-        FileUtils.rm_rf(app_root_bundled)
+    def copy_cache_gems
+      vendor_bundle = "#{@full_app_root}/vendor/bundle"
+      if File.exist?(vendor_bundle)
+        puts "Removing current vendor_bundle from project"
+        FileUtils.rm_rf(vendor_bundle)
       end
-      # Leave #{Jets.build_root}/bundled behind to act as cache
-      if File.exist?("#{cache_area}/bundled")
-        FileUtils.cp_r("#{cache_area}/bundled", app_root_bundled)
+      # Leave #{Jets.build_root}/vendor_bundle behind to act as cache
+      if File.exist?("#{cache_area}/vendor/bundle")
+        FileUtils.mkdir_p(File.dirname(vendor_bundle))
+        FileUtils.cp_r("#{cache_area}/vendor/bundle", vendor_bundle)
       end
     end
 
