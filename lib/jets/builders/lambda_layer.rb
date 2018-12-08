@@ -7,18 +7,22 @@ class Jets::Builders
     #
     def build
       code = "#{Jets.build_root}/stage/code"
-      opt_original = "#{Jets.build_root}/stage/code/opt"
+      opt_original = "#{code}/opt"
       opt = "#{Jets.build_root}/stage/opt"
       FileUtils.mv(opt_original, opt)
-      gems_original = "#{Jets.build_root}/stage/code/vendor/bundle/ruby/#{Jets::Gems.ruby_version_folder}/gems"
-      gems = "#{Jets.build_root}/stage/gems"
+
+      ruby_folder = Jets::Gems.ruby_version_folder
+      gems_original = "#{code}/vendor/bundle/ruby/#{ruby_folder}"
+      gems = "#{Jets.build_root}/stage/opt/ruby/gems/#{ruby_folder}"
+      FileUtils.mkdir_p(File.dirname(gems))
       FileUtils.mv(gems_original, gems)
+      FileUtils.rmdir("#{code}/vendor/bundle/ruby")
+      FileUtils.rmdir("#{code}/vendor/bundle")
+      FileUtils.rmdir("#{code}/vendor") if Dir.empty?("#{code}/vendor")
 
       code_size = compute_size(code)
-      gems_size = compute_size(gems)
       opt_size = compute_size(opt)
-      gems_layer_size = gems_size + opt_size
-      total_size = gems_layer_size + code_size
+      total_size = opt_size + code_size
 
       if within_lambda_limit?(total_size)
         puts "Gems Layer Size is within the limit"
@@ -27,11 +31,14 @@ class Jets::Builders
       end
 
       puts "code: #{megabytes(code_size)}"
-      puts "gems: #{megabytes(gems_size)}"
       puts "opt: #{megabytes(opt_size)}"
-      puts "gems_layer: #{megabytes(gems_layer_size)}"
       puts "total: #{megabytes(total_size)}"
+      puts "remaining: #{megabytes(125 * 1024 - total_size)}"
     end
+
+    # move all extensions first
+    # then move binary gems
+    # then move regular gems
 
     def within_lambda_limit?(total_size)
       limit_in_mb = 125 # 125MB because jets ruby runtime is 125MB. Total lambda limit is 250MB
@@ -44,8 +51,8 @@ class Jets::Builders
       out.split(' ').first.to_i # bytes
     end
 
-    def megabytes(size)
-       n = size / 1024.0
+    def megabytes(bytes)
+       n = bytes / 1024.0
        sprintf('%.1f', n) + 'MB'
     end
 
