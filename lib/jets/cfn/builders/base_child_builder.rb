@@ -58,7 +58,7 @@ class Jets::Cfn::Builders
     end
 
     def add_function(task)
-      resource = Jets::Resource::Function.new(task)
+      resource = Jets::Resource::Lambda::Function.new(task)
       add_resource(resource)
     end
 

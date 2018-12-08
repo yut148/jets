@@ -1,6 +1,6 @@
-class Jets::Resource
+module Jets::Resource::Lambda
   class Function < Jets::Resource::Base
-    autoload :Environment, 'jets/resource/function/environment'
+    autoload :Environment, 'jets/resource/lambda/function/environment'
     include Environment
 
     def initialize(task)

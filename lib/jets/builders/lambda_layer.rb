@@ -36,9 +36,9 @@ class Jets::Builders
       puts "remaining: #{megabytes(125 * 1024 - total_size)}"
     end
 
-    # move all extensions first
-    # then move binary gems
-    # then move regular gems
+    # TODO: for lazy gem loading
+    # Move regular gems.
+    # Move binary gems but only the gems, leave the .so extensions.
 
     def within_lambda_limit?(total_size)
       limit_in_mb = 125 # 125MB because jets ruby runtime is 125MB. Total lambda limit is 250MB
