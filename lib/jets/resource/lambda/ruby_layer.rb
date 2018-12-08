@@ -14,7 +14,12 @@ module Jets::Resource::Lambda
 
       # Manually uploaded for testing
       # TODO: remove the hardcode
-      "jets/code/runtime-e73b3505.zip"
+      # "jets/code/runtime-e73b3505.zip"
+      "runtime.zip"
+    end
+
+    def s3_bucket
+      "gems-test-2-us-west-2"
     end
   end
 end

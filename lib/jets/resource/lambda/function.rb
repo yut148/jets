@@ -127,11 +127,12 @@ module Jets::Resource::Lambda
       props.merge!(
         function_name: function_name,
         handler: handler,
-        runtime: "provided",
-        layers: [
-          "!Ref RubyLayer",
-          "!Ref GemLayer",
-        ]
+        runtime: runtime,
+        # runtime: "provided",
+        # layers: [
+        #   "!Ref RubyLayer",
+        #   "!Ref GemLayer",
+        # ]
       )
     end
 
