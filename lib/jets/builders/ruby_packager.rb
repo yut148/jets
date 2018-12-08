@@ -29,8 +29,6 @@ class Jets::Builders
       # extract_ruby
       replace_compiled_gems
       tidy
-      puts "EARLY EXIT".colorize(:yellow)
-      exit
     end
 
     def gemfile_exist?

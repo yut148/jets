@@ -128,15 +128,6 @@ class Jets::Builders
       end
     end
 
-    # TODO: only do this shuffling if lazy load
-    # Move bundled to opt/bundled folder in preparation for zipping up opt.zip
-    # instead of bundled.zip
-    def move_bundled_under_opt
-      FileUtils.mkdir_p("#{stage_area}/opt") # /tmp/jets/demo/stage/opt
-      # mv /tmp/jets/demo/stage/code/bundled /tmp/jets/demo/stage/opt/bundled
-      FileUtils.mv("#{full(tmp_code)}/bundled", "#{stage_area}/opt/bundled")
-    end
-
     # Moves code/bundled and code/rack to build_root.
     # These files will be packaged separated and lazy loaded as part of the
     # node shim. This keeps the code zipfile smaller in size and helps
@@ -193,12 +184,17 @@ class Jets::Builders
     end
 
     def code_finish
+      # Reconfigure code
       update_lazy_load_config # at the top, must be called before Jets.lazy_load? is used
       store_s3_base_url
       disable_webpacker_middleware
       copy_internal_jets_code
-      move_bundled_under_opt
-      setup_symlinks
+
+      # Code prep and zipping
+      lambda_layer = LambdaLayer.new
+      lambda_layer.build
+      # setup_symlinks # TODO: figure out /tmp/rack
+
       calculate_md5s # must be called before generate_node_shims and create_zip_files
       generate_node_shims
       create_zip_files
