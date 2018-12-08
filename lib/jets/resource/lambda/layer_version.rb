@@ -33,19 +33,6 @@ module Jets::Resource::Lambda
       self.class.name.split('::').last
     end
 
-    def description
-      "Jets Ruby Gems"
-    end
-
-    def layer_name
-      "jets-ruby-gems"
-    end
-
-    def code_s3_key
-      checksum = Jets::Builders::Md5.checksums["stage/opt"]
-      "jets/code/opt-#{checksum}.zip" # s3_key
-    end
-
     def outputs
       {
         logical_id => "!Ref #{logical_id}",

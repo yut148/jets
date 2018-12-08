@@ -12,9 +12,8 @@ module Jets::Resource::Lambda
       # checksum = Jets::Builders::Md5.checksums["stage/opt"]
       # "jets/code/ruby-#{checksum}.zip" # s3_key
 
-      # TODO: remove the hardcode
-      #   s3://demo-dev-s3bucket-108423hnrqykk/jets/code/runtime-e73b3505.zip
       # Manually uploaded for testing
+      # TODO: remove the hardcode
       "jets/code/runtime-e73b3505.zip"
     end
   end

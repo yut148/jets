@@ -120,14 +120,18 @@ module Jets::Resource::Lambda
       properties
     end
 
-    # Properties managed by Jets with more finality.
+    # Properties managed by Jets with merged with finality.
     def finalize_properties!(props)
       handler = full_handler(props)
       runtime = get_runtime(props)
       props.merge!(
         function_name: function_name,
         handler: handler,
-        runtime: runtime,
+        runtime: "provided",
+        layers: [
+          "!Ref RubyLayer",
+          "!Ref GemLayer",
+        ]
       )
     end
 

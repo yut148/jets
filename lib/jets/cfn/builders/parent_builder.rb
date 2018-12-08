@@ -38,7 +38,7 @@ class Jets::Cfn::Builders
       add_resource(resource)
       add_outputs(resource.outputs)
 
-      resource = Jets::Resource::Lambda::LayerVersion.new
+      resource = Jets::Resource::Lambda::GemLayer.new
       add_resource(resource)
       add_outputs(resource.outputs)
     end
