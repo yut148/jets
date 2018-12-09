@@ -178,4 +178,11 @@ module Jets::Core
   def process(event, context, handler)
     Jets::Processors::MainProcessor.new(event, context, handler).run
   end
+
+  def handler(lambda_instance, handler)
+    meth = handler.split('.').last
+    lambda_instance.define_method(meth) do |event:, context:|
+      Jets::Processors::MainProcessor.new(event, context, handler).run
+    end
+  end
 end
