@@ -34,10 +34,6 @@ class Jets::Cfn::Builders
       add_outputs(resource.outputs)
 
       # return unless jets_ruby_layer?
-      resource = Jets::Resource::Lambda::RubyLayer.new
-      add_resource(resource)
-      add_outputs(resource.outputs)
-
       resource = Jets::Resource::Lambda::GemLayer.new
       add_resource(resource)
       add_outputs(resource.outputs)

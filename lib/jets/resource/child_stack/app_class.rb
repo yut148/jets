@@ -60,7 +60,6 @@ module Jets::Resource::ChildStack
       {
         IamRole: "!GetAtt IamRole.Arn",
         S3Bucket: "!Ref S3Bucket",
-        RubyLayer: "!Ref RubyLayer",
         GemLayer: "!Ref GemLayer",
       }
     end

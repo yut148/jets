@@ -33,7 +33,8 @@ class Jets::Builders
 
       code_size = compute_size(code)
       opt_size = compute_size(opt)
-      ruby_layer_size = 125 * 1024 # TODO: calculate this from the download
+      # ruby_layer_size = 125 * 1024 # TODO: calculate this from the download
+      ruby_layer_size = 0
       total_size = opt_size + code_size + ruby_layer_size
       puts "code: #{megabytes(code_size)}"
       puts "opt: #{megabytes(opt_size)}"
