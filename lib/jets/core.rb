@@ -176,6 +176,6 @@ module Jets::Core
   end
 
   def process(event, context, handler)
-    Jets::Processors::MainProcessor.new(event, context, "handlers/controllers/posts_controller.index").run
+    Jets::Processors::MainProcessor.new(event, context, handler).run
   end
 end
