@@ -175,7 +175,9 @@ module Jets::Core
     Jets.config.domain.hosted_zone_name
   end
 
-  def process(event, context, handler)
-    Jets::Processors::MainProcessor.new(event, context, handler).run
+  def handler(meth, event, context, handler)
+    define_method(meth) do
+      Jets::Processors::MainProcessor.new(event, context, handler).run
+    end
   end
 end
