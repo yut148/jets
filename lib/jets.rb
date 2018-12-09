@@ -35,6 +35,7 @@ module Jets
   autoload :Job, 'jets/job'
   autoload :Klass, 'jets/klass'
   autoload :Lambda, 'jets/lambda'
+  autoload :LazyLoad, "jets/lazy_load"
   autoload :Logger, "jets/logger"
   autoload :Mega, "jets/mega"
   autoload :Middleware, "jets/middleware"

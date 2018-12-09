@@ -186,4 +186,14 @@ module Jets::Core
       process(event, context, handler)
     end
   end
+
+  def once
+    lazy_load!
+    boot
+  end
+
+  def lazy_load!
+    return unless Jets.lazy_load?
+    LazyLoad.new.load!
+  end
 end

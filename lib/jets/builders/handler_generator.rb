@@ -14,10 +14,26 @@ class Jets::Builders
     end
 
     def build
+      generate_data_yaml
       app_ruby_shims
       poly_shims
       shared_shims
       internal_shims
+    end
+
+    # The handlers/data.yml is used by the shims
+    def generate_data_yaml
+      vars = Jets::Builders::ShimVars::Base.new
+      data = {
+        "s3_bucket" => vars.s3_bucket,
+        "rack_zip" => vars.rack_zip,
+        # "gems_zip" => vars.gems_zip, # TODO: implement gems_zipe
+      }
+
+      content = YAML.dump(data)
+      path = "#{tmp_code}/handlers/data.yml"
+      FileUtils.mkdir_p(File.dirname(path))
+      IO.write(path, content)
     end
 
     def app_ruby_shims
