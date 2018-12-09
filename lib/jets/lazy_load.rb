@@ -6,7 +6,7 @@ module Jets
     include AwsServices
 
     def initialize(yaml_path=nil)
-      yaml_path ||= "#{Jets.build_root}/stage/code/handlers/data.yml"
+      yaml_path ||= "#{Jets.root}handlers/data.yml"
       @data = YAML.load_file(yaml_path)
       @s3_bucket = @data['s3_bucket']
       @zip_file = @data['rack_zip']
