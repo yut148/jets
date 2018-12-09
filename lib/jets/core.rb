@@ -194,6 +194,6 @@ module Jets::Core
 
   def lazy_load!
     return unless Jets.lazy_load?
-    LazyLoad.new.load!
+    Jets::LazyLoad.new.load!
   end
 end
