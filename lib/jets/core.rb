@@ -183,7 +183,7 @@ module Jets::Core
   def handler(lambda_context, handler)
     meth = handler.split('.').last
     lambda_context.send(:define_method, meth) do |event:, context:|
-      process(event, context, handler)
+      Jets.process(event, context, handler)
     end
   end
 
