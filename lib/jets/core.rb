@@ -188,8 +188,8 @@ module Jets::Core
   end
 
   def once
-    lazy_load!
     boot
+    lazy_load!
   end
 
   def lazy_load!
