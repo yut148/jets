@@ -14,7 +14,6 @@ class Jets::Builders
     end
 
     def build
-      common_base_shim
       app_ruby_shims
       poly_shims
       shared_shims
@@ -143,7 +142,7 @@ class Jets::Builders
     end
 
     def generate_handler(vars)
-      result = evaluate_template("handler.js", vars)
+      result = evaluate_template("handler.rb", vars)
       dest = "#{tmp_code}/#{vars.js_path}"
       FileUtils.mkdir_p(File.dirname(dest))
       IO.write(dest, result)

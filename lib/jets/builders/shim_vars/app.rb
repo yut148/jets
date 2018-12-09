@@ -69,10 +69,10 @@ module Jets::Builders::ShimVars
     end
 
     # Example return: "handlers/controllers/posts.js"
+    # TODO: rename this to dest_path or something better now since using native ruby
     def js_path
       @relative_path
         .sub("app", "handlers")
-        .sub(/\.rb$/, ".js")
     end
   end
 end

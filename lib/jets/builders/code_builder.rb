@@ -128,6 +128,12 @@ class Jets::Builders
       end
     end
 
+    def symlink_gems
+      dest = "#{stage_area}/code/vendor/bundle/ruby/2.5.0"
+      FileUtils.mkdir_p(File.dirname(dest))
+      FileUtils.ln_sf("/opt/ruby/gems/2.5.0", dest)
+    end
+
     # Moves code/bundled and code/rack to build_root.
     # These files will be packaged separated and lazy loaded as part of the
     # node shim. This keeps the code zipfile smaller in size and helps
@@ -193,6 +199,7 @@ class Jets::Builders
       # Code prep and zipping
       lambda_layer = LambdaLayer.new
       lambda_layer.build
+      symlink_gems
       # setup_symlinks # TODO: figure out /tmp/rack
 
       calculate_md5s # must be called before generate_node_shims and create_zip_files
