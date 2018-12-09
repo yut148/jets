@@ -174,4 +174,8 @@ module Jets::Core
   def custom_domain?
     Jets.config.domain.hosted_zone_name
   end
+
+  def process(event, context, handler)
+    Jets::Processors::MainProcessor.new(event, context, "handlers/controllers/posts_controller.index").run
+  end
 end
