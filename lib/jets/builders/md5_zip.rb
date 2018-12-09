@@ -37,26 +37,6 @@ class Jets::Builders
       puts "Zip file created at: #{md5_dest.colorize(:green)} (#{file_size})"
     end
 
-    def create_parent
-      headline "Creating zip file for #{@path}"
-      # => Creating zip file for /tmp/jets/demo/stage/bundled
-
-      # https://serverfault.com/questions/265675/how-can-i-zip-compress-a-symlink
-      zip_pwd = File.dirname(@path)
-      zip_folder = File.basename(@path)
-      command = "cd #{zip_pwd} && zip --symlinks -rq #{zip_file} #{zip_folder}"
-      sh(command)
-
-      FileUtils.mkdir_p(File.dirname(zip_dest))
-      FileUtils.mv("#{zip_pwd}/#{zip_file}", zip_dest)
-
-      # mv /tmp/jets/demo/stage/zips/code.zip /tmp/jets/demo/stage/zips/code-a8a604aa.zip
-      FileUtils.mv(zip_dest, md5_dest)
-
-      file_size = number_to_human_size(File.size(md5_dest))
-      puts "Zip file created at: #{md5_dest.colorize(:green)} (#{file_size})"
-    end
-
     # /tmp/jets/demo/stage/zips/code.zip
     def zip_dest
       stage_area, filename = File.dirname(@path), File.basename(@path)
