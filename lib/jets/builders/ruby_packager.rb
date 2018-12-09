@@ -27,7 +27,7 @@ class Jets::Builders
       return unless gemfile_exist?
 
       copy_cache_gems
-      extract_ruby
+      # extract_ruby
       replace_compiled_gems
       tidy
     end

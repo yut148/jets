@@ -9,8 +9,12 @@ module Jets::Resource::Lambda
     end
 
     def code_s3_key
-      checksum = Jets::Builders::Md5.checksums["stage/opt"]
-      "jets/code/opt-#{checksum}.zip" # s3_key
+      # checksum = Jets::Builders::Md5.checksums["stage/opt"]
+      "rubies/ruby-2.5.3.zip"
+    end
+
+    def s3_bucket
+      "lambdagems2"
     end
   end
 end
