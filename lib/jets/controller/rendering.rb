@@ -73,8 +73,10 @@ class Jets::Controller
     def url_for(url)
       # No longer need to add stage name, think this is due to rack middleware support
       # Leaving in as comment for now just in case.
-      # add_stage_name(url)
-      url
+      # So think with custom domains we dont want this... but with API Gateway we need this
+      # TODO: figure on aws_gateway_dns? method
+      add_stage_name(url)
+      # url
     end
 
     def actual_host
