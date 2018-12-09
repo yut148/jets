@@ -1,12 +1,10 @@
-# TODO: would like to handle gems in layer instead of vendor/bundle
-# But have to also account for gems that are using git repo
-#
 require "bundler/setup"
 require "jets"
 Jets.boot
 
-def lambda_handler(event:, context:)
-  puts "hi"
-  puts "Jets.env #{Jets.env}"
-  {test: "hello"}
+<% @vars.functions.each do |function_name| -%>
+def <%= function_name %>(event:, context:)
+  result = Jets::Processors::MainProcessor.new(JSON.dump(event), JSON.dump(context), "<%= @vars.handler_for(function_name) %>").run
+  JSON.load(result)
 end
+<% end %>
