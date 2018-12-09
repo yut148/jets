@@ -7,7 +7,7 @@ module Jets::Resource::Lambda
     end
 
     def layer_name
-      "jets-ruby-gems"
+      "#{Jets.project_namespace}-gems"
     end
 
     def code_s3_key

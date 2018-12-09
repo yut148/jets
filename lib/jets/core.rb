@@ -179,10 +179,11 @@ module Jets::Core
     Jets::Processors::MainProcessor.new(event, context, handler).run
   end
 
-  def handler(lambda_instance, handler)
+  # Example: Jets.handler(self, "handlers/controllers/posts_controller.index")
+  def handler(lambda_context, handler)
     meth = handler.split('.').last
-    lambda_instance.send(:define_method, meth) do |event:, context:|
-      Jets::Processors::MainProcessor.new(event, context, handler).run
+    lambda_context.send(:define_method, meth) do |event:, context:|
+      process(event, context, handler)
     end
   end
 end
