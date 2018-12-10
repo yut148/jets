@@ -157,7 +157,7 @@ class Jets::Builders
 
     def generate_handler(vars)
       result = evaluate_template("handler.rb", vars)
-      dest = "#{tmp_code}/#{vars.js_path}"
+      dest = "#{tmp_code}/#{vars.dest_path}"
       FileUtils.mkdir_p(File.dirname(dest))
       IO.write(dest, result)
     end
