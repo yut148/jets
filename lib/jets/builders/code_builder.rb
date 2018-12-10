@@ -59,9 +59,11 @@ class Jets::Builders
       # Expanding to the full path and capture now.
       # Dir.chdir gets called later and we'll lose this info.
       @full_project_path = File.expand_path(Jets.root) + "/"
+      @version_purger = VersionPurger.new
     end
 
     def build
+      @version_purger.purge
       cache_check_message
       check_ruby_version
 

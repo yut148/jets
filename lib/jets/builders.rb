@@ -11,4 +11,5 @@ class Jets::Builders
   autoload :ShimVars, "jets/builders/shim_vars"
   autoload :Tidy, "jets/builders/tidy"
   autoload :Util, "jets/builders/util"
+  autoload :VersionPurger, "jets/builders/version_purger"
 end
