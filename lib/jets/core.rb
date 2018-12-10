@@ -176,7 +176,13 @@ module Jets::Core
   end
 
   def process(event, context, handler)
-    Jets::Processors::MainProcessor.new(event, context, handler).run
+    if event['_prewarm']
+      Jets.increase_prewarm_count
+      Jets.logger.info("Prewarm request")
+      {prewarmed_at: Time.now.to_s}
+    else
+      Jets::Processors::MainProcessor.new(event, context, handler).run
+    end
   end
 
   # Example: Jets.handler(self, "handlers/controllers/posts_controller.index")
@@ -198,6 +204,7 @@ module Jets::Core
     Jets::LazyLoad.new.load!
   end
 
+  # Megamode support
   def start_rack_server(options={})
     rack = Jets::RackServer.new(options)
     rack.start
