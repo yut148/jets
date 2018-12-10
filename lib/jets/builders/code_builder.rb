@@ -63,9 +63,9 @@ class Jets::Builders
     end
 
     def build
+      check_ruby_version
       @version_purger.purge
       cache_check_message
-      check_ruby_version
 
       clean_start
       compile_assets # easier to do before we copy the project because node and yarn has been likely setup in the that dir
@@ -122,44 +122,6 @@ class Jets::Builders
       end
     end
 
-    # Moves code/bundled and code/rack to build_root.
-    # These files will be packaged separated and lazy loaded as part of the
-    # node shim. This keeps the code zipfile smaller in size and helps
-    # with the 250MB extract limited. /tmp permits up to 512MB.
-    # AWS Lambda Limits: https://amzn.to/2A7y6v6
-    #
-    #   > Each Lambda function receives an additional 512MB of non-persistent disk space in its own /tmp directory. The /tmp directory can be used for loading additional resources like dependency libraries or data sets during function initialization.
-    #
-    def setup_symlinks
-      symlink_gems
-      rack_symlink
-    end
-
-    def symlink_gems
-      ruby_folder = Jets::Gems.ruby_folder
-      dest = "#{stage_area}/code/vendor/bundle/ruby/#{ruby_folder}"
-      FileUtils.mkdir_p(File.dirname(dest))
-      FileUtils.ln_sf("/opt/ruby/gems/#{ruby_folder}", dest)
-    end
-
-    # Moves folder to a stage folder and create a symlink its place
-    # that links from /var/task to /tmp. Example:
-    #
-    #   /var/task/bundled => /tmp/bundled
-    #
-    def rack_symlink
-      src = "#{full(tmp_code)}/rack"
-      return unless File.exist?(src)
-
-      dest = "#{stage_area}/rack"
-      dir = File.dirname(dest)
-      FileUtils.mkdir_p(dir) unless File.exist?(dir)
-      FileUtils.mv(src, dest)
-
-      # Create symlink
-      FileUtils.ln_sf("/tmp/rack", "/#{full(tmp_code)}/rack")
-    end
-
     def stage_area
       "#{Jets.build_root}/stage"
     end
@@ -176,7 +138,7 @@ class Jets::Builders
 
       # Code prep and zipping
       build_lambda_layer
-      setup_symlinks
+      create_lazy_gems
       calculate_md5s # must be called before generate_node_shims and create_zip_files
       generate_node_shims
       create_zip_files

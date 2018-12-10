@@ -4,6 +4,7 @@ class Jets::Builders
       return unless gemfile_exist?
 
       symlink_gems
+      rack_symlink
       copy_rackup_wrappers
     end
 
@@ -25,6 +26,24 @@ class Jets::Builders
         FileUtils.cp(src, dest)
         FileUtils.chmod 0755, dest
       end
+    end
+
+    # Moves folder to a stage folder and create a symlink its place
+    # that links from /var/task to /tmp. Example:
+    #
+    #   code_area/rack => /tmp/rack
+    #
+    def rack_symlink
+      src = "#{@full_app_root}/rack"
+      return unless File.exist?(src)
+
+      dest = "#{stage_area}/rack"
+      dir = File.dirname(dest)
+      FileUtils.mkdir_p(dir) unless File.exist?(dir)
+      FileUtils.mv(src, dest)
+
+      # Create symlink
+      FileUtils.ln_sf("/tmp/rack", "/#{@full_app_root}/rack")
     end
   end
 end

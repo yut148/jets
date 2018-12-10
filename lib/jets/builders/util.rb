@@ -16,5 +16,13 @@ class Jets::Builders
     def full(relative_path)
       "#{Jets.build_root}/#{relative_path}"
     end
+
+    def stage_area
+      "#{Jets.build_root}/stage"
+    end
+
+    def code_area
+      "#{stage_area}/code"
+    end
   end
 end
