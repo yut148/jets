@@ -47,16 +47,13 @@ class Jets::Builders
         raise "lambda layer is too large"
       end
     end
-
     # TODO: for lazy gem loading
     # Move regular gems.
     # Move binary gems but only the gems, leave the .so extensions.
 
     def within_lambda_limit?(total_size)
       # Jets Ruby Runtime is about 125MB right now
-      buffer = 5  # 5MB buffer just in case
-      limit = LAMBDA_SIZE_LIMIT - buffer
-      total_size < limit * 1024 # 120MB
+      total_size < LAMBDA_SIZE_LIMIT * 1024 # 120MB
     end
 
     def compute_size(path)
@@ -68,17 +65,5 @@ class Jets::Builders
        n = bytes / 1024.0
        sprintf('%.1f', n) + 'MB'
     end
-
-    # TODO: only do this shuffling if lazy load
-    # Move bundled to opt/bundled folder in preparation for zipping up opt.zip
-    # instead of bundled.zip
-    def move_bundled_under_opt
-      FileUtils.mkdir_p("#{stage_area}/opt") # /tmp/jets/demo/stage/opt
-      # mv /tmp/jets/demo/stage/code/bundled /tmp/jets/demo/stage/opt/bundled
-      FileUtils.mv("#{full(tmp_code)}/bundled", "#{stage_area}/opt/bundled")
-    end
-
-    # setup_symlinks # TODO: figure out /tmp/rack
-
   end
 end
