@@ -24,16 +24,17 @@ module Jets::Commands
 
     def set_initial_variables
       @project_name = project_folder == '.' ? File.basename(Dir.pwd) : project_folder
+      @database = options[:database]
+      @webpacker = options[:webpacker]
+      @bootstrap = options[:bootstrap]
 
       # options is a frozen hash by Thor so cannot modify it.
       # Also had trouble unfreezing it with .dup. So using instance variables instead
       case options[:mode]
-      when 'html'
-        @webpacker = options[:webpacker]
-        @bootstrap = options[:bootstrap]
       when 'api', 'job'
         @webpacker = false
         @bootstrap = false
+        @database = false
       else
         puts "Invalid mode provided: #{@options[:mode].colorize(:red)}. Please pass in an valid mode: #{VALID_MODES.join(',').colorize(:green)}."
         exit 1
