@@ -48,8 +48,6 @@ class Jets::Builders
     # project gets built again not all the gems from get installed from the
     # beginning.
     def bundle_install
-      return if poly_only?
-
       full_project_path = @full_app_root
       headline "Bundling: running bundle install in cache area: #{cache_area}."
 

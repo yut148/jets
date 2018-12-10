@@ -212,8 +212,6 @@ class Jets::Builders
     # At this point the minimal stack exists, so we can grab it with the AWS API.
     # We do not want to grab this as part of the live request because it is slow.
     def store_s3_base_url
-      return if poly_only?
-
       write_s3_base_url("config/s3_base_url.txt")
       write_s3_base_url("rack/config/s3_base_url.txt") if Jets.rack?
     end
@@ -368,7 +366,7 @@ class Jets::Builders
     memoize :rack_packager
 
     def package_ruby
-      return if Jets.poly_only? # this changes to binary only and then we dont use the jets ruby rutime layer
+      return if Jets.poly_only?
 
       ruby_packager.install
       reconfigure_rails # call here after full(tmp_code) is available
