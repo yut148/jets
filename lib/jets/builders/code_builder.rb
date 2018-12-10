@@ -50,9 +50,6 @@ require "action_view"
 # * create zip file
 class Jets::Builders
   class CodeBuilder
-    # https://docs.aws.amazon.com/lambda/latest/dg/limits.html
-    AWS_CODE_SIZE_LIMIT = 250 * 1024 * 1024 # 250MB
-
     include Jets::AwsServices
     include Util
     extend Memoist
@@ -171,7 +168,6 @@ class Jets::Builders
 
     def code_finish
       # Reconfigure code
-      update_lazy_load_config # at the top, must be called before Jets.lazy_load? is used
       store_s3_base_url
       disable_webpacker_middleware
       copy_internal_jets_code
@@ -199,17 +195,6 @@ class Jets::Builders
         dest = "#{full(tmp_code)}/#{relative_path}"
         FileUtils.mkdir_p(File.dirname(dest))
         FileUtils.cp(src, dest)
-      end
-    end
-
-    def update_lazy_load_config
-      size_limit = AWS_CODE_SIZE_LIMIT
-      code_size = dir_size(full(tmp_code))
-      if code_size > size_limit && !Jets.config.ruby.lazy_load
-        # override the setting because we dont have to a choice but to lazy load
-        mb_limit = AWS_CODE_SIZE_LIMIT / 1024 / 1024
-        puts "Code size close to AWS code size limit of #{mb_limit}MB. Lazy loading automatically enabled."
-        Jets.config.ruby.lazy_load = true
       end
     end
 
