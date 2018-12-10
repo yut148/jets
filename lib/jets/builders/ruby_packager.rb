@@ -27,7 +27,6 @@ class Jets::Builders
       return unless gemfile_exist?
 
       copy_cache_gems
-      # extract_ruby
       replace_compiled_gems
       tidy
     end
@@ -174,16 +173,6 @@ EOL
         build_root: cache_area, # used in lambdagem
         project_root: @full_app_root, # used in gem_replacer and lambdagem
       }
-    end
-
-    def extract_ruby
-      headline "Setting up a vendored copy of ruby."
-      # Assign source_url differently here because for gems the source url can be
-      # customized and is dynamically computed by GemReplacer.
-      options = gems_options.merge(
-        source_url: "https://gems2.lambdagems.com",
-      )
-      Jets::Gems::Extract::Ruby.new(Jets::RUBY_VERSION, options).run
     end
 
     def replace_compiled_gems

@@ -3,15 +3,16 @@ class Jets::Builders
     def finish
       return unless gemfile_exist?
 
-      symlink_rack_bundled
+      symlink_gems
       copy_rackup_wrappers
     end
 
-    def symlink_rack_bundled
+    def symlink_gems
+      ruby_folder = Jets::Gems.ruby_folder
       # IE: @full_app_root: /tmp/jets/demo/stage/code/rack
-      rack_bundled = "#{@full_app_root}/bundled"
-      FileUtils.rm_f(rack_bundled) # looks like FileUtils.ln_sf doesnt remove existing symlinks
-      FileUtils.ln_sf("/var/task/bundled", rack_bundled)
+      dest = "#{@full_app_root}/vendor/bundle/ruby/#{ruby_folder}"
+      FileUtils.mkdir_p(File.dirname(dest))
+      FileUtils.ln_sf("/opt/ruby/gems/#{ruby_folder}", dest)
     end
 
     def copy_rackup_wrappers

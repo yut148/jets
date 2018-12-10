@@ -267,7 +267,6 @@ class Jets::Builders
     # This happens in the current app directory not the tmp code for simplicity.
     # This is because the node and yarn has likely been set up correctly there.
     def compile_assets
-      ENV['JETS_SKIP_ASSETS'] = '1' # HARDCODE FOR NOW
       if ENV['JETS_SKIP_ASSETS']
         puts "Skip compiling assets".colorize(:yellow) # useful for debugging
         return
