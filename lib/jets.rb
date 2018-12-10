@@ -47,9 +47,8 @@ module Jets
   autoload :Resource, "jets/resource"
   autoload :Route, "jets/route"
   autoload :Router, "jets/router"
-  autoload :RubyServer, "jets/ruby_server"
+  autoload :RackServer, "jets/rack_server"
   autoload :Rule, 'jets/rule'
-  autoload :Server, "jets/server"
   autoload :Stack, "jets/stack"
   autoload :Turbine, 'jets/turbine'
   autoload :Util, "jets/util"

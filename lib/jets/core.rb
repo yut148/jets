@@ -190,10 +190,17 @@ module Jets::Core
   def once
     boot
     lazy_load!
+    start_rack_server
   end
 
   def lazy_load!
     return unless Jets.lazy_load?
     Jets::LazyLoad.new.load!
+  end
+
+  def start_rack_server(options={})
+    rack = Jets::RackServer.new(options)
+    rack.start
+    rack.wait_for_socket
   end
 end
