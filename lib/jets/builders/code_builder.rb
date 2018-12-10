@@ -386,7 +386,7 @@ class Jets::Builders
       return if Jets.poly_only? # this changes to binary only and then we dont use the jets ruby rutime layer
 
       ruby_packager.install
-      reconfigure_rails # since full(tmp_code) is not available
+      reconfigure_rails # call here after full(tmp_code) is available
       rack_packager.install
       ruby_packager.finish # by this time we have a /tmp/jets/demo/stage/code/bundled
       rack_packager.finish

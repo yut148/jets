@@ -2,18 +2,18 @@ class Jets::Builders
   class LambdaLayer
     LAMBDA_SIZE_LIMIT = 250 # Total lambda limit is 250MB
 
-    # Important folders:
-    #
-    #   stage/code/opt/linux
-    #   stage/code/vendor/bundle/ruby/2.5.0/gems
-    #
     # At this point we gems have all been moved to stage/code/vendor/bundle, this includes
-    # binary gems.  This is a good state. This method moves them:
+    # binary gems, a good state. This method moves them:
     #
     #   from stage/code/vendor/bundle/ruby/2.5.0
     #   to stage/opt/ruby/gems/2.5.0
     #
     # This is done because we want to get as many gems into the Lambda Layer as possible.
+    #
+    # Important folders later:
+    #
+    #   stage/code/opt/lib
+    #   stage/code/opt/ruby
     #
     def build
       code = "#{Jets.build_root}/stage/code"

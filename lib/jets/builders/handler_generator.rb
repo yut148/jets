@@ -27,7 +27,7 @@ class Jets::Builders
       data = {
         "s3_bucket" => vars.s3_bucket,
         "rack_zip" => vars.rack_zip,
-        # "gems_zip" => vars.gems_zip, # TODO: implement gems_zipe
+        # "gems_zip" => vars.gems_zip, # TODO: implement gems_zip
       }
 
       content = YAML.dump(data)
