@@ -19,6 +19,7 @@ class Jets::Builders
       code = "#{Jets.build_root}/stage/code"
       opt_original = "#{code}/opt"
       opt = "#{Jets.build_root}/stage/opt"
+      FileUtils.mkdir_p(File.dirname(opt))
       FileUtils.mv(opt_original, opt)
 
       ruby_folder = Jets::Gems.ruby_folder
