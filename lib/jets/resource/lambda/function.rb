@@ -124,14 +124,13 @@ module Jets::Resource::Lambda
     def finalize_properties!(props)
       handler = full_handler(props)
       runtime = get_runtime(props)
-      props.merge!(
+      managed = {
         function_name: function_name,
         handler: handler,
         runtime: runtime,
-        layers: [
-          "!Ref GemLayer",
-        ]
-      )
+      }
+      managed[:layers] = ["!Ref GemLayer"] if runtime =~ /^ruby/
+      props.merge!(managed)
     end
 
     def get_runtime(props)

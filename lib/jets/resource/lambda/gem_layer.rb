@@ -8,7 +8,7 @@ module Jets::Resource::Lambda
 
     def layer_name
       # Do not include the Jets.extra_env to group the layers in same app together
-      "#{Jets.env}-#{Jets.config.project_name}-gems"
+      "#{Jets.config.short_env}-#{Jets.config.project_name}-gems"
     end
 
     def code_s3_key
