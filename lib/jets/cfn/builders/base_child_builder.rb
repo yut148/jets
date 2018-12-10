@@ -22,15 +22,10 @@ class Jets::Cfn::Builders
     end
 
     def add_common_parameters
-      # TODO: maybe get the parametes from Jets::Resource::ChildStack::AppClass#common_parameters
-      # Jets::Resource::ChildStack::AppClass#common_parameters
-      app_resource = Jets::Resource::ChildStack::AppClass.new(s3_bucket=nil) # doesnt matter what s3_bucket is in this case
-        # only using class for common_parameters
-      app_resource.common_parameters.each do |k,_|
+      common_parameters = Jets::Resource::ChildStack::AppClass.common_parameters
+      common_parameters.each do |k,_|
         add_parameter(k, Description: k)
       end
-      # add_parameter("IamRole", Description: "Iam Role that Lambda function uses.")
-      # add_parameter("S3Bucket", Description: "S3 Bucket for source code.")
 
       depends_on_params.each do |logical_id, desc|
         add_parameter(logical_id, Description: desc)

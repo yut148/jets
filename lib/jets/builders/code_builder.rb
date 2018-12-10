@@ -181,6 +181,7 @@ class Jets::Builders
     end
 
     def build_lambda_layer
+      return if Jets.poly_only?
       lambda_layer = LambdaLayer.new
       lambda_layer.build
     end

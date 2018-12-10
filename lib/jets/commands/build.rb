@@ -85,7 +85,9 @@ module Jets::Commands
       #   Jets::Cfn::Builders::FunctionBuilder.new(HelloFunction)
       app_class = Jets::Klass.from_path(path)
       builder = builder_class.new(app_class)
-      builder.build
+      unless Jets.poly_only? && app_class == Jets::PreheatJob
+        builder.build
+      end
     end
 
     def build_parent_template

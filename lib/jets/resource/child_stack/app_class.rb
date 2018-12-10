@@ -50,18 +50,19 @@ module Jets::Resource::ChildStack
     end
 
     def parameters
-      common = common_parameters
+      common = self.class.common_parameters
       common.merge!(controller_params) if controller?
       common.merge!(depends_on_params) if depends_on
       common
     end
 
-    def common_parameters
-      {
+    def self.common_parameters
+      parameters = {
         IamRole: "!GetAtt IamRole.Arn",
         S3Bucket: "!Ref S3Bucket",
-        GemLayer: "!Ref GemLayer",
       }
+      parameters[:GemLayer] = "!Ref GemLayer" unless Jets.poly_only?
+      parameters
     end
 
     def controller_params

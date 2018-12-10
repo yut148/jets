@@ -17,7 +17,7 @@ class Jets::Builders
 
       def stage_folders
         paths = []
-        paths << "stage/opt"
+        paths << "stage/opt" unless Jets.poly_only?
         paths << "stage/rack" if Jets.rack?
         # Important to have stage/code at the end, since it will use the other
         # 'symlinked' folders to adjust the md5 hash.

@@ -33,7 +33,7 @@ class Jets::Cfn::Builders
       add_resource(resource)
       add_outputs(resource.outputs)
 
-      # return unless jets_ruby_layer?
+      return if Jets.poly_only?
       resource = Jets::Resource::Lambda::GemLayer.new
       add_resource(resource)
       add_outputs(resource.outputs)
