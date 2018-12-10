@@ -137,9 +137,10 @@ class Jets::Builders
     end
 
     def symlink_gems
-      dest = "#{stage_area}/code/vendor/bundle/ruby/2.5.0"
+      ruby_folder = Jets::Gems.ruby_folder
+      dest = "#{stage_area}/code/vendor/bundle/ruby/#{ruby_folder}"
       FileUtils.mkdir_p(File.dirname(dest))
-      FileUtils.ln_sf("/opt/ruby/gems/2.5.0", dest)
+      FileUtils.ln_sf("/opt/ruby/gems/#{ruby_folder}", dest)
     end
 
     # Moves folder to a stage folder and create a symlink its place

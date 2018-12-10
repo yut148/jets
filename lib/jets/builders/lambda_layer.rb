@@ -21,7 +21,7 @@ class Jets::Builders
       opt = "#{Jets.build_root}/stage/opt"
       FileUtils.mv(opt_original, opt)
 
-      ruby_folder = Jets::Gems.ruby_version_folder
+      ruby_folder = Jets::Gems.ruby_folder
       gems_original = "#{code}/vendor/bundle/ruby/#{ruby_folder}"
       gems = "#{Jets.build_root}/stage/opt/ruby/gems/#{ruby_folder}"
       FileUtils.mkdir_p(File.dirname(gems))
