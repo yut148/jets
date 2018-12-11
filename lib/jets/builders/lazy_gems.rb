@@ -1,6 +1,6 @@
 class Jets::Builders
   class LazyGems
-    LAMBDA_SIZE_LIMIT = 30 # Total lambda limit is 250MB
+    LAMBDA_SIZE_LIMIT = 250 # Total lambda limit is 250MB
 
     include Util
 
@@ -24,9 +24,9 @@ class Jets::Builders
       display_sizes
 
       unless within_lambda_limit?
-        code_size = compute_size("#{stage_area}/code")
         puts "Cannot fit code into AWS Lambda code size limit even after lazying loading all the gems.".colorize(:red)
-        puts "Please reduce the size of your code.  The reduced code size after lazy loading gems is: #{megabytes(code_size)}"
+        puts "The reduced total size after lazy loading gems is: #{megabytes(total_size)}. The Lambda limit is #{LAMBDA_SIZE_LIMIT}MB"
+        puts "Please reduce the size of your code."
         exit 1
       end
       puts "lazy_gems.rb exit early"
@@ -77,9 +77,14 @@ class Jets::Builders
 
     def done_moving?
       ruby_folder = "#{stage_area}/opt/ruby/gems/2.5.0"
-      !File.exist?("#{ruby_folder}/bundler")# &&
-      all_symlinks?("#{ruby_folder}/gems") &&
-      all_symlinks?("#{ruby_folder}/specifications")
+
+      bundler_check = !File.exist?("#{ruby_folder}/bundler") ||
+                      File.symlink?("#{ruby_folder}/bundler")
+
+      all_symlinks_check = all_symlinks?("#{ruby_folder}/gems") &&
+                           all_symlinks?("#{ruby_folder}/specifications")
+
+      bundler_check && all_symlinks_check
     end
 
     def all_symlinks?(folder)

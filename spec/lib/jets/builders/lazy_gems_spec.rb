@@ -4,14 +4,16 @@ describe Jets::Builders::LazyGems do
       Jets::Builders::LazyGems.new
     end
 
-    context "jets app" do
-      let(:project_dir) { ENV['JETS_ROOT'] }
-      it "cleanup" do
-        tidy.cleanup!
+    context "within lambda 250MB total limit" do
+      it "creates a single layer for gems" do
+      end
+    end
+
+    context "over lambda 250MB total limit" do
+      it "creates max size layer for gems" do
       end
 
-      it "excludes should not include jetskeep" do
-        expect(tidy.jetskeep).to eq [".bundle", "bundled", "pack", "handlers", "public/assets"]
+      it "creates gems.zip to be lazy loaded" do
       end
     end
   end
