@@ -1,6 +1,6 @@
 class Jets::Builders
   class TmpGems
-    LAMBDA_SIZE_LIMIT = 250 # Total lambda limit is 250MB
+    LAMBDA_SIZE_LIMIT = 20 # Total lambda limit is 250MB
 
     include Util
 

@@ -25,10 +25,10 @@ class Jets::Builders
     def generate_data_yaml
       vars = Jets::Builders::ShimVars::Base.new
       data = {
-        "s3_bucket" => vars.s3_bucket,
-        "rack_zip" => vars.rack_zip,
-        # "gems_zip" => vars.gems_zip, # TODO: implement gems_zip
+        "s3_bucket" => vars.s3_bucket
       }
+      data["rack_zip"] = vars.rack_zip if vars.rack_zip
+      data["gems_zip"] = vars.gems_zip if vars.gems_zip
 
       content = YAML.dump(data)
       path = "#{tmp_code}/handlers/data.yml"

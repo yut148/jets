@@ -1,6 +1,3 @@
-# const S3_BUCKET = '<%= @vars.s3_bucket %>';
-# const RACK_ZIP = '<%= @vars.rack_zip %>';       // jets/code/rack-checksum.zip
-# const BUNDLED_ZIP = '<%= @vars.bundled_zip %>'; // /tmp/bundled-checksum.zip
 module Jets
   class TmpLoader
     include AwsServices
@@ -13,17 +10,23 @@ module Jets
       yaml_path ||= "#{Jets.root}handlers/data.yml"
       @data = YAML.load_file(yaml_path)
       @s3_bucket = @data['s3_bucket']
-      @zip_file = @data['rack_zip']
+      @rack_zip = @data['rack_zip']
+      @gems_zip = @data['gems_zip']
     end
 
     def load
       rack
-      # TODO: lazy load gems
+      gems
     end
 
     def rack
-      return unless Jets.rack?
-      download_and_extract(@zip_file, '/tmp/rack')
+      return unless @rack_zip
+      download_and_extract(@rack_zip, '/tmp/rack')
+    end
+
+    def gems
+      return unless @gems_zip
+      download_and_extract(@gems_zip, '/tmp/gems')
     end
 
     def download_and_extract(zip_file, folder_dest)

@@ -190,11 +190,11 @@ module Jets::Core
 
   def once
     boot
-    lazy_load!
+    tmp_load!
     start_rack_server
   end
 
-  def lazy_load!
+  def tmp_load!
     Jets::TmpLoader.load!
   end
 

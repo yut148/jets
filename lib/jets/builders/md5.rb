@@ -17,12 +17,18 @@ class Jets::Builders
 
       def stage_folders
         paths = []
-        paths << "stage/opt" unless Jets.poly_only?
-        paths << "stage/rack" if Jets.rack?
+        paths << "stage/opt" if folder_exist?("opt")
+        paths << "stage/gems" if folder_exist?("gems")
+        paths << "stage/rack" if folder_exist?("rack")
         # Important to have stage/code at the end, since it will use the other
         # 'symlinked' folders to adjust the md5 hash.
         paths << "stage/code"
         paths
+      end
+
+      def folder_exist?(folder)
+        path = "#{Jets.build_root}/stage/#{folder}"
+        File.directory?(path)
       end
 
       def compute!
