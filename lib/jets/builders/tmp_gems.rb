@@ -144,7 +144,7 @@ class Jets::Builders
       puts "opt: #{megabytes(opt_size)}"
       puts "total: #{megabytes(total_size)}"
       puts "remaining: #{megabytes(LAMBDA_SIZE_LIMIT * 1024 - total_size)}"
-      sh "du -csh /tmp/jets/demo/stage/*"
+      sh "du -csh #{stage_area}/*"
     end
 
     def compute_size(path)
