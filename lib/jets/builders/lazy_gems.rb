@@ -8,21 +8,17 @@ class Jets::Builders
     # and moved gems out out stage/opt to stage/gems. The stage/gems will be
     # lazy loaded into /tmp/jets and symlinked over. Example:
     #
-    #   code/vendor/bundle/ruby/2.5.0/gems/hello-1.2.3 -> /tmp/ruby/gems/2.5.0/gems/hello-1.2.3
+    #   /opt/ruby/gems/2.5.0/gems/hello-1.2.3 -> /tmp/ruby/gems/2.5.0/gems/hello-1.2.3
     #
-    # TODO: for lazy gem loading
-    # Move regular gems.
-    # Move binary gems but only the gems, leave the .so extensions.
     def create
       display_sizes
 
       lazy_load_gems = !within_lambda_limit?
       if lazy_load_gems
         puts "Code size + gems layer over lambda limit. Limit: #{LAMBDA_SIZE_LIMIT}MB Total size: #{megabytes(total_size)}"
-        symlink_some_gems
+        symlink_lazy_gems
       else
         puts "Code size + gems layer is within the limit"
-        symlink_all_gems
       end
 
       display_sizes
@@ -35,6 +31,8 @@ class Jets::Builders
       end
       puts "lazy_gems.rb exit early"
       exit 1
+
+      symlink_vendor_gems
     end
 
     # Complex logic. We symlink gems to /tmp folder that is lazy loaded.
@@ -55,7 +53,7 @@ class Jets::Builders
     #   /opt/ruby/gems/2.5.0/doc
     #   /opt/ruby/gems/2.5.0/extensions
     #
-    def symlink_some_gems
+    def symlink_lazy_gems
       until within_lambda_limit? || @done_moving do
         move_gems
         @done_moving = done_moving?
@@ -73,8 +71,8 @@ class Jets::Builders
       end
       return unless gem_path
       gem_name = File.basename(gem_path)
-      create_symlink("gems/#{gem_name}")
-      create_symlink("specifications/#{gem_name}.gemspec")
+      move_and_symlink("gems/#{gem_name}")
+      move_and_symlink("specifications/#{gem_name}.gemspec")
     end
 
     def done_moving?
@@ -90,9 +88,10 @@ class Jets::Builders
 
     # Gem specifically under opt/ruby/gems/2.5.0/bundler
     def move_bundler_gems
-      return if @move_bundler_gems
-      create_symlink("bundler")
-      @move_bundler_gems = true
+      bundler_path = "#{stage_area}/opt/ruby/gems/2.5.0/bundler"
+      return unless File.exist?(bundler_path)
+      return if File.symlink?(bundler_path)
+      move_and_symlink("bundler")
     end
 
     # Moves the folder in /opt to /tmp and symlinks to it from /opt to /tmp.
@@ -101,11 +100,11 @@ class Jets::Builders
     #
     # Example:
     #
-    #   create_symlink("bundler")
+    #   move_and_symlink("bundler")
     #   =>
     #   /opt/ruby/gems/2.5.0/bundler -> /tmp/gems/2.5.0/bundler
     #
-    def create_symlink(path)
+    def move_and_symlink(path)
       src = "#{stage_area}/opt/ruby/gems/2.5.0/#{path}"
       dest = "#{stage_area}/gems/2.5.0/#{path}"
       FileUtils.mkdir_p(File.dirname(dest))
@@ -125,7 +124,7 @@ class Jets::Builders
     end
 
     # Simple logic: vendor/bundle/ruby/2.5.0 -> /opt/ruby/gems/2.5.0
-    def symlink_all_gems
+    def symlink_vendor_gems
       ruby_folder = Jets::Gems.ruby_folder
       dest = "#{code_area}/vendor/bundle/ruby/#{ruby_folder}"
       FileUtils.mkdir_p(File.dirname(dest))
