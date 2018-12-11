@@ -3,7 +3,11 @@ class Jets::Builders
     def sh(command)
       puts "=> #{command}".colorize(:green)
       success = system(command)
-      abort("#{command} failed to run") unless success
+      unless success
+        puts "#{command} failed to run.".colorize(:red)
+        puts caller[0]
+        exit 1
+      end
       success
     end
 

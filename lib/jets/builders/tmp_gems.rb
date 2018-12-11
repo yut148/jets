@@ -15,25 +15,26 @@ class Jets::Builders
 
       lazy_load_gems = !within_lambda_limit?
       if lazy_load_gems
-        puts "Code size + gems layer over lambda limit. Limit: #{LAMBDA_SIZE_LIMIT}MB Total size: #{megabytes(total_size)}"
+        say "Code size + gems layer over lambda limit. Limit: #{LAMBDA_SIZE_LIMIT}MB Total size: #{megabytes(total_size)}"
         symlink_tmp_gems
       else
-        puts "Code size + gems layer is within the limit"
+        say "Code size + gems layer is within the limit"
       end
 
       display_sizes
 
       unless within_lambda_limit?
-        puts "Cannot fit code into AWS Lambda code size limit even after lazying loading all the gems.".colorize(:red)
-        puts "The reduced total size after lazy loading gems is: #{megabytes(total_size)}. The Lambda limit is #{LAMBDA_SIZE_LIMIT}MB"
-        puts "Please reduce the size of your code."
-        exit 1
+        say "Cannot fit code into AWS Lambda code size limit even after lazying loading all the gems.".colorize(:red)
+        say "The reduced total size after lazy loading gems is: #{megabytes(total_size)}. The Lambda limit is #{LAMBDA_SIZE_LIMIT}MB"
+        say "Please reduce the size of your code."
+        halt
       end
-      puts "tmp_gems.rb exit early"
-      exit 1
 
       symlink_vendor_gems
     end
+
+    # For spec expectation
+    def halt; exit 1; end
 
     # Complex logic. We symlink gems to /tmp folder that is lazy loaded.
     #
@@ -99,7 +100,7 @@ class Jets::Builders
       move_and_symlink("bundler")
     end
 
-    # Moves the folder in /opt to /tmp and symlinks to it from /opt to /tmp.
+    # Moves the folder in /opt to /gems and symlinks to it from /opt to /gems.
     #
     # Parameter: relative_path within the ruby folder. IE: 2.5.0
     #
@@ -107,14 +108,14 @@ class Jets::Builders
     #
     #   move_and_symlink("bundler")
     #   =>
-    #   /opt/ruby/gems/2.5.0/bundler -> /tmp/gems/2.5.0/bundler
+    #   /opt/ruby/gems/2.5.0/bundler -> gems/2.5.0/bundler
     #
     def move_and_symlink(path)
       src = "#{stage_area}/opt/ruby/gems/2.5.0/#{path}"
       dest = "#{stage_area}/gems/2.5.0/#{path}"
       FileUtils.mkdir_p(File.dirname(dest))
       FileUtils.mv(src, dest)
-      # puts "ln -sf #{dest} #{src}" # uncomment to see and debug
+      # say "ln -sf #{dest} #{src}" # uncomment to see and debug
       FileUtils.ln_sf(dest, src)
     end
 
@@ -133,6 +134,7 @@ class Jets::Builders
       ruby_folder = Jets::Gems.ruby_folder
       dest = "#{code_area}/vendor/bundle/ruby/#{ruby_folder}"
       FileUtils.mkdir_p(File.dirname(dest))
+      say "ln -sf /opt/ruby/gems/#{ruby_folder} #{dest}"
       FileUtils.ln_sf("/opt/ruby/gems/#{ruby_folder}", dest)
     end
 
@@ -140,11 +142,11 @@ class Jets::Builders
       code_size = compute_size("#{stage_area}/code")
       opt_size = compute_size("#{stage_area}/opt")
       total_size = opt_size + code_size
-      puts "code: #{megabytes(code_size)}"
-      puts "opt: #{megabytes(opt_size)}"
-      puts "total: #{megabytes(total_size)}"
-      puts "remaining: #{megabytes(LAMBDA_SIZE_LIMIT * 1024 - total_size)}"
-      sh "du -csh #{stage_area}/*"
+      say "code: #{megabytes(code_size)}"
+      say "opt: #{megabytes(opt_size)}"
+      say "total: #{megabytes(total_size)}"
+      say "remaining: #{megabytes(LAMBDA_SIZE_LIMIT * 1024 - total_size)}"
+      sh "du -csh #{stage_area}/*" unless ENV['TEST']
     end
 
     def compute_size(path)
@@ -153,8 +155,12 @@ class Jets::Builders
     end
 
     def megabytes(bytes)
-       n = bytes / 1024.0
-       sprintf('%.1f', n) + 'MB'
+      n = bytes / 1024.0
+      sprintf('%.1f', n) + 'MB'
+    end
+
+    def say(message)
+      puts message unless ENV['TEST']
     end
   end
 end
