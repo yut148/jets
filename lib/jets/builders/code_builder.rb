@@ -144,6 +144,10 @@ class Jets::Builders
       create_zip_files
     end
 
+    def create_lazy_gems
+      LazyGems.new.create
+    end
+
     def build_lambda_layer
       return if Jets.poly_only?
       lambda_layer = LambdaLayer.new
@@ -215,6 +219,8 @@ class Jets::Builders
     # This happens in the current app directory not the tmp code for simplicity.
     # This is because the node and yarn has likely been set up correctly there.
     def compile_assets
+      puts "SKIPPING ASSETS HARD CODE"
+      ENV['JETS_SKIP_ASSETS'] = '1'
       if ENV['JETS_SKIP_ASSETS']
         puts "Skip compiling assets".colorize(:yellow) # useful for debugging
         return
