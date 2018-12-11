@@ -2,7 +2,7 @@
 title: Functions
 ---
 
-You can simple Lambda ruby functions in the `app/functions` folder. A function looks like this:
+You can write simple Lambda Ruby functions in the `app/functions` folder. A function looks like this:
 
 app/functions/simple.rb:
 
