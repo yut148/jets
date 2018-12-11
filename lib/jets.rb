@@ -35,7 +35,6 @@ module Jets
   autoload :Job, 'jets/job'
   autoload :Klass, 'jets/klass'
   autoload :Lambda, 'jets/lambda'
-  autoload :LazyLoad, "jets/lazy_load"
   autoload :Logger, "jets/logger"
   autoload :Mega, "jets/mega"
   autoload :Middleware, "jets/middleware"
@@ -43,13 +42,14 @@ module Jets
   autoload :PolyFun, 'jets/poly_fun'
   autoload :Preheat, "jets/preheat"
   autoload :Processors, 'jets/processors'
+  autoload :RackServer, "jets/rack_server"
   autoload :Rdoc, "jets/rdoc"
   autoload :Resource, "jets/resource"
   autoload :Route, "jets/route"
   autoload :Router, "jets/router"
-  autoload :RackServer, "jets/rack_server"
   autoload :Rule, 'jets/rule'
   autoload :Stack, "jets/stack"
+  autoload :TmpLoader, "jets/tmp_loader"
   autoload :Turbine, 'jets/turbine'
   autoload :Util, "jets/util"
 

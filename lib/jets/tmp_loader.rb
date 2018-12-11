@@ -2,8 +2,12 @@
 # const RACK_ZIP = '<%= @vars.rack_zip %>';       // jets/code/rack-checksum.zip
 # const BUNDLED_ZIP = '<%= @vars.bundled_zip %>'; // /tmp/bundled-checksum.zip
 module Jets
-  class LazyLoad
+  class TmpLoader
     include AwsServices
+
+    def self.load!
+      new.load
+    end
 
     def initialize(yaml_path=nil)
       yaml_path ||= "#{Jets.root}handlers/data.yml"
@@ -12,7 +16,7 @@ module Jets
       @zip_file = @data['rack_zip']
     end
 
-    def load!
+    def load
       rack
       # TODO: lazy load gems
     end

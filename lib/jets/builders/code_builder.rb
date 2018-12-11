@@ -59,7 +59,7 @@ class Jets::Builders
       # Expanding to the full path and capture now.
       # Dir.chdir gets called later and we'll lose this info.
       @full_project_path = File.expand_path(Jets.root) + "/"
-      @version_purger = VersionPurger.new
+      @version_purger = Purger.new
     end
 
     def build
@@ -138,14 +138,14 @@ class Jets::Builders
 
       # Code prep and zipping
       build_lambda_layer
-      create_lazy_gems
+      create_tmp_gems
       calculate_md5s # must be called before generate_node_shims and create_zip_files
       generate_node_shims
       create_zip_files
     end
 
-    def create_lazy_gems
-      LazyGems.new.create
+    def create_tmp_gems
+      TmpGems.new.create
     end
 
     def build_lambda_layer

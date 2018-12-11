@@ -1,6 +1,6 @@
 # When upgrading jets, automatically rm -rf /tmp/jets in case the structure has changed.
 class Jets::Builders
-  class VersionPurger
+  class Purger
     def initialize
       @version_file = "/tmp/jets/version.txt"
     end

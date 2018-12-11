@@ -1,7 +1,7 @@
-describe Jets::Builders::LazyGems do
+describe Jets::Builders::TmpGems do
   context "general" do
-    let(:lazy_gems) do
-      Jets::Builders::LazyGems.new
+    let(:tmp_gems) do
+      Jets::Builders::TmpGems.new
     end
 
     context "within lambda 250MB total limit" do
@@ -28,7 +28,7 @@ describe Jets::Builders::LazyGems do
         gems = File.exist?("#{stage_area}/gems")
         expect(opt).to be true
         expect(gems).to be true
-        lazy_gems.halt # expect this to be called
+        tmp_gems.halt # expect this to be called
       end
     end
   end

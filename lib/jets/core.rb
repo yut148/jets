@@ -195,7 +195,7 @@ module Jets::Core
   end
 
   def lazy_load!
-    Jets::LazyLoad.new.load!
+    Jets::TmpLoader.load!
   end
 
   # Megamode support

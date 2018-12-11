@@ -1,5 +1,5 @@
 class Jets::Builders
-  class LazyGems
+  class TmpGems
     LAMBDA_SIZE_LIMIT = 250 # Total lambda limit is 250MB
 
     include Util
@@ -16,7 +16,7 @@ class Jets::Builders
       lazy_load_gems = !within_lambda_limit?
       if lazy_load_gems
         puts "Code size + gems layer over lambda limit. Limit: #{LAMBDA_SIZE_LIMIT}MB Total size: #{megabytes(total_size)}"
-        symlink_lazy_gems
+        symlink_tmp_gems
       else
         puts "Code size + gems layer is within the limit"
       end
@@ -29,7 +29,7 @@ class Jets::Builders
         puts "Please reduce the size of your code."
         exit 1
       end
-      puts "lazy_gems.rb exit early"
+      puts "tmp_gems.rb exit early"
       exit 1
 
       symlink_vendor_gems
@@ -53,7 +53,7 @@ class Jets::Builders
     #   /opt/ruby/gems/2.5.0/doc
     #   /opt/ruby/gems/2.5.0/extensions
     #
-    def symlink_lazy_gems
+    def symlink_tmp_gems
       until within_lambda_limit? || @done_moving do
         move_gems
         @done_moving = done_moving?
