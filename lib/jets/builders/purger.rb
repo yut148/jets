@@ -2,7 +2,8 @@
 class Jets::Builders
   class Purger
     def initialize
-      @version_file = "/tmp/jets/#{Jets.config.project_name}/jets_version.txt"
+      @project_name = Jets.config.project_name
+      @version_file = "/tmp/jets/#{@project_name}/jets_version.txt"
     end
 
     def purge
@@ -10,8 +11,8 @@ class Jets::Builders
         last_version = @last_version || "unknown"
         puts "The jets version has changed since the last build. "
         puts "Current jets version: #{Jets::VERSION} Last built jets version: #{last_version}"
-        puts "Removing entire /tmp/jets to start fresh."
-        FileUtils.rm_rf("/tmp/jets")
+        puts "Removing entire /tmp/jets/#{@project_name} to start fresh."
+        FileUtils.rm_rf("/tmp/jets/#{@project_name}")
       end
       write_version
     end
