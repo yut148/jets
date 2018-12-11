@@ -12,6 +12,9 @@ describe Jets::Builders::TmpGems do
         puts Jets.build_root
         expect(true).to be true
         puts tmp_gems.stage_area
+
+        allow(:tmp_gems).to receive(:within_lambda_limit?).and_return(true)
+
       end
     end
 

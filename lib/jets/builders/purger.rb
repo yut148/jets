@@ -2,7 +2,7 @@
 class Jets::Builders
   class Purger
     def initialize
-      @version_file = "/tmp/jets/version.txt"
+      @version_file = "/tmp/jets/#{Jets.config.project_name}/jets_version.txt"
     end
 
     def purge
