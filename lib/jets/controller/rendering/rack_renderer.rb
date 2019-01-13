@@ -20,6 +20,7 @@ module Jets::Controller::Rendering
       status = normalize_status_code(@options[:status])
 
       base64 = normalized_base64_option(@options)
+
       headers = @options[:headers] || {}
       headers = cors_headers.merge(headers)
       set_content_type!(status, headers)
@@ -172,7 +173,10 @@ module Jets::Controller::Rendering
         headers.delete "Content-Length"
         headers.delete "Content-Type"
       else
-        headers["Content-Type"] = @options[:content_type] || Jets::Controller::DEFAULT_CONTENT_TYPE
+        headers["Content-Type"] = @options[:content_type] ||
+                                  headers['content-type'] || # Mega Mode (Rails)
+                                  headers['Content-Type'] || # Just in case
+                                  Jets::Controller::DEFAULT_CONTENT_TYPE
       end
     end
 
