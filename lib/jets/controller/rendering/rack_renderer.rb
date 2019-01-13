@@ -1,8 +1,15 @@
 require "rack/utils"
 
 # Special renderer.  All the other renderers lead here
-module Jets::Controller::Renderers
-  class RackRenderer < BaseRenderer
+module Jets::Controller::Rendering
+  class RackRenderer
+    delegate :request, :event, :headers, to: :controller
+    attr_reader :controller
+    def initialize(controller, options={})
+      @controller = controller
+      @options = options
+    end
+
     # Example response:
     #
     #   [200, {"my-header" = > "value" }, "my body" ]
@@ -29,16 +36,6 @@ module Jets::Controller::Renderers
       end
 
       [status, headers, body] # triplet
-    end
-
-    def controller_instance_variables
-      instance_vars = @controller.instance_variables.inject({}) do |vars, v|
-        k = v.to_s.sub(/^@/,'') # @var => var
-        vars[k] = @controller.instance_variable_get(v)
-        vars
-      end
-      instance_vars[:event] = event
-      instance_vars
     end
 
     # Example: posts/index
@@ -136,6 +133,69 @@ module Jets::Controller::Renderers
       render_options
     end
 
+    def controller_instance_variables
+      instance_vars = @controller.instance_variables.inject({}) do |vars, v|
+        k = v.to_s.sub(/^@/,'') # @var => var
+        vars[k] = @controller.instance_variable_get(v)
+        vars
+      end
+      instance_vars[:event] = event
+      instance_vars
+    end
+
+  private
+    # From jets/controller/response.rb
+    def drop_content_info?(status)
+      status.to_i / 100 == 1 or drop_body?(status)
+    end
+
+    DROP_BODY_RESPONSES = [204, 304]
+    def drop_body?(status)
+      DROP_BODY_RESPONSES.include?(status.to_i)
+    end
+
+    # maps:
+    #   :continue => 100
+    #   :success => 200
+    #   etc
+    def normalize_status_code(code)
+      status_code = if code.is_a?(Symbol)
+                      Rack::Utils::SYMBOL_TO_STATUS_CODE[code]
+                    else
+                      code
+                    end
+      (status_code || 200).to_s # API Gateway requires a string but rack is okay with either
+    end
+
+    def set_content_type!(status, headers)
+      if drop_content_info?(status)
+        headers.delete "Content-Length"
+        headers.delete "Content-Type"
+      else
+        headers["Content-Type"] = @options[:content_type] || Jets::Controller::DEFAULT_CONTENT_TYPE
+      end
+    end
+
+    def normalized_base64_option(options)
+      base64 = @options[:base64] if options.key?(:base64)
+      base64 = @options[:isBase64Encoded] if options.key?(:isBase64Encoded)
+      base64
+    end
+
+    def cors_headers
+      case Jets.config.cors
+      when true
+        {
+          "Access-Control-Allow-Origin" => "*", # Required for CORS support to work
+          "Access-Control-Allow-Credentials" => "true" # Required for cookies, authorization headers with HTTPS
+        }
+      when Hash
+        Jets.config.cors # contains Hash with Access-Control-Allow-* values
+      else
+        {}
+      end
+    end
+
     class << self
       def setup!
         require "action_controller"
@@ -183,37 +243,7 @@ module Jets::Controller::Renderers
         end
       end
     end
-
-    ###################
-    def set_content_type!(status, headers)
-      if drop_content_info?(status)
-        headers.delete "Content-Length"
-        headers.delete "Content-Type"
-      else
-        headers["Content-Type"] = @options[:content_type] || Jets::Controller::DEFAULT_CONTENT_TYPE
-      end
-    end
-
-    def normalized_base64_option(options)
-      base64 = @options[:base64] if options.key?(:base64)
-      base64 = @options[:isBase64Encoded] if options.key?(:isBase64Encoded)
-      base64
-    end
-
-    def cors_headers
-      case Jets.config.cors
-      when true
-        {
-          "Access-Control-Allow-Origin" => "*", # Required for CORS support to work
-          "Access-Control-Allow-Credentials" => "true" # Required for cookies, authorization headers with HTTPS
-        }
-      when Hash
-        Jets.config.cors # contains Hash with Access-Control-Allow-* values
-      else
-        {}
-      end
-    end
   end
 end
 
-Jets::Controller::Renderers::RackRenderer.setup!
+Jets::Controller::Rendering::RackRenderer.setup!

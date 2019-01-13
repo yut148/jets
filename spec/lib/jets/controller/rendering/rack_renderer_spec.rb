@@ -1,7 +1,7 @@
-describe Jets::Controller::Renderers::RackRenderer do
+describe Jets::Controller::Rendering::RackRenderer do
   let(:renderer) do
     controller = double(:null).as_null_object
-    Jets::Controller::Renderers::RackRenderer.new(controller)
+    Jets::Controller::Rendering::RackRenderer.new(controller)
   end
 
   it "rackify_headers" do
