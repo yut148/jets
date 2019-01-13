@@ -5,6 +5,19 @@ class Jets::RackController < Jets::Controller::Base
   # Megamode
   def process
     resp = mega_request
+
+    # resp = {
+    #   status: 304,
+    #   body: nil,
+    # }
+    # # resp = {
+    # #   status: 200,
+    # #   headers: {},
+    # #   body: "test",
+    # # }
+    # puts "megamode resp: ".colorize(:yellow)
+    # pp resp
+
     render(resp)
   end
 

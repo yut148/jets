@@ -8,7 +8,7 @@ class Jets::Controller
       return @rendered_data if @rendered
 
       # defaults to rendering templates
-      Renderers::TemplateRenderer.new(self, managed_options).render
+      Renderers::RackRenderer.new(self, managed_options).render
     end
 
     # Many different ways to render:
@@ -28,7 +28,7 @@ class Jets::Controller
       options.reverse_merge!(managed_options)
       adjust_content_type!(options)
 
-      @rendered_data = Renderers::TemplateRenderer.new(self, options).render
+      @rendered_data = Renderers::RackRenderer.new(self, options).render
 
       @rendered = true
       @rendered_data
