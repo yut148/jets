@@ -14,9 +14,9 @@ module Jets::Controller::Renderers
       # Rails rendering does heavy lifting
       renderer = ActionController::Base.renderer.new(renderer_options)
       body = renderer.render(render_options)
-      @options[:body] = body # important to set as it was originally nil
+      @options[:body] = body if body # important to set as it was originally nil
 
-      RackRenderer.new(@controller, @options).render
+      RackRenderer.new(@controller, @options).render # returns rack triplet
     end
 
     # Example: posts/index

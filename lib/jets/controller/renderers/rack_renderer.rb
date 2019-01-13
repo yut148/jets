@@ -15,11 +15,31 @@ module Jets::Controller::Renderers
 
       headers = @options[:headers] || {}
       headers = cors_headers.merge(headers)
-      headers["Content-Type"] ||= @options[:content_type] || Jets::Controller::DEFAULT_CONTENT_TYPE
+      set_content_type!(status, headers)
+
       # x-jets-base64 to convert this Rack triplet to a API Gateway hash structure later
       headers["x-jets-base64"] = base64 ? 'yes' : 'no' # headers values must be Strings
       body = StringIO.new(body)
       [status, headers, body] # triplet
+    end
+
+    def set_content_type!(status, headers)
+      if drop_content_info?(status)
+        headers.delete "Content-Length"
+        headers.delete "Content-Type"
+      else
+        headers["Content-Type"] = @options[:content_type] || Jets::Controller::DEFAULT_CONTENT_TYPE
+      end
+    end
+
+    # From jets/controller/response.rb
+    def drop_content_info?(status)
+      status.to_i / 100 == 1 or drop_body?(status)
+    end
+
+    DROP_BODY_RESPONSES = [204, 304]
+    def drop_body?(status)
+      DROP_BODY_RESPONSES.include?(status.to_i)
     end
 
     # maps:

@@ -27,6 +27,7 @@ class Jets::Controller
 
       options.reverse_merge!(managed_options)
       adjust_content_type!(options)
+
       @rendered_data = Renderers::TemplateRenderer.new(self, options).render
 
       @rendered = true
