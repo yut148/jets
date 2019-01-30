@@ -25,6 +25,11 @@ module Jets
       def exception_reporter(label, &block)
         on_exception(label, &block)
       end
+
+      # Make config available in Turbine. Note only available outside of hooks like initializers.
+      def config
+        Jets.application.config
+      end
     end
   end
 end

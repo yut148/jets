@@ -10,11 +10,19 @@ class Jets::Booter
       Jets::Dotenv.load!
 
       Jets.application.setup!
-      app_initializers
+      # Jets.eager_load_jets after auto_load paths configured in setup!
+      # Jets.eager_load_jets is called to ensure that internal Turbines get loaded.
+      eager_load_jets
       turbine_initializers
+      # Load configs after Turbine initializers so Turbines can defined some config options
+      # and they are available in user's project environment configs.
+      Jets.application.configs!
+      app_initializers
       Jets.application.finish!
 
-      Jets.eager_load!
+      # Eager load project code. Rather have user find out early than late.
+      eager_load_app
+
       setup_db
       # build_middleware_stack # TODO: figure out how to build middleware during Jets.boot without breaking jets new and webpacker:install
 
@@ -125,6 +133,67 @@ class Jets::Booter
         puts "To have Jets update the config.fu file for you, you can run:\n\n"
         puts "  jets upgrade"
         exit 1
+      end
+    end
+
+    # Eager load jet's lib and classes
+    def eager_load_jets
+      lib_jets = File.expand_path(".", File.dirname(__FILE__))
+      Dir.glob("#{lib_jets}/**/*.rb").select do |path|
+        next if !File.file?(path)
+        next if skip_eager_load_paths?(path)
+
+        path = path.sub("#{lib_jets}/","jets/")
+        class_name = path
+                      .sub(/\.rb$/,'') # remove .rb
+                      .sub(/^\.\//,'') # remove ./
+                      .sub(/app\/\w+\//,'') # remove app/controllers or app/jobs etc
+                      .camelize
+        # special class mappings
+        class_name = class_mappings(class_name)
+        class_name.constantize # use constantize instead of require so dont have to worry about order.
+      end
+    end
+
+    # Skip these paths because eager loading doesnt work for them.
+    def skip_eager_load_paths?(path)
+      path =~ %r{/cli} ||
+      path =~ %r{/core_ext} ||
+      path =~ %r{/default/application} ||
+      path =~ %r{/functions} ||
+      path =~ %r{/internal/app} ||
+      path =~ %r{/jets/stack} ||
+      path =~ %r{/overrides} ||
+      path =~ %r{/rackup_wrappers} ||
+      path =~ %r{/reconfigure_rails} ||
+      path =~ %r{/templates/} ||
+      path =~ %r{/turbo/project/} ||
+      path =~ %r{/version} ||
+      path =~ %r{/webpacker} ||
+      path =~ %r{/jets/spec}
+    end
+
+    def class_mappings(class_name)
+      map = {
+        "Jets::Io" => "Jets::IO",
+      }
+      map[class_name] || class_name
+    end
+
+    # Eager load user's application
+    def eager_load_app
+      Dir.glob("#{Jets.root}/app/**/*.rb").select do |path|
+        next if !File.file?(path) or path =~ %r{/javascript/} or path =~ %r{/views/}
+        next if path.include?('app/functions') || path.include?('app/shared/functions') || path.include?('app/internal/functions')
+
+        class_name = path
+                      .sub(/\.rb$/,'') # remove .rb
+                      .sub(%{^\./},'') # remove ./
+                      .sub("#{Jets.root}/",'')
+                      .sub(%r{app/shared/\w+/},'') # remove shared/resources or shared/extensions
+                      .sub(%r{app/\w+/},'') # remove app/controllers or app/jobs etc
+        class_name = class_name.classify
+        class_name.constantize # use constantize instead of require so dont have to worry about order.
       end
     end
   end
