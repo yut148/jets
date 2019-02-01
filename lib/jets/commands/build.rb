@@ -180,6 +180,9 @@ module Jets::Commands
       rack_catchall = Jets::Router.has_controller?("Jets::RackController")
       paths << "#{controllers}/rack_controller.rb" if rack_catchall
 
+      mailer_controller = Jets::Router.has_controller?("Jets::MailersController")
+      paths << "#{controllers}/mailers_controller.rb" if mailer_controller
+
       if Jets.config.prewarm.enable
         jobs = File.expand_path("../../internal/app/jobs/jets", __FILE__)
         paths << "#{jobs}/preheat_job.rb"
