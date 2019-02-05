@@ -11,12 +11,8 @@ GIT
 PATH
   remote: /home/ec2-user/environment/jets
   specs:
-<<<<<<< HEAD
     jets (1.6.9)
-=======
-    jets (1.6.7)
       actionmailer (~> 5.2.1)
->>>>>>> actionmailer support
       activerecord (~> 5.2.1)
       activesupport (~> 5.2.1)
       aws-sdk-apigateway
