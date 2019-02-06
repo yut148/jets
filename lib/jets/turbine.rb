@@ -1,5 +1,6 @@
 module Jets
   class Turbine
+    class_attribute :after_initializers
     class_attribute :initializers
     class_attribute :on_exceptions
 
@@ -10,6 +11,11 @@ module Jets
 
       def inherited(base)
         subclasses << base
+      end
+
+      def after_initializer(label, &block)
+        self.after_initializers ||= {}
+        self.after_initializers[label] = block
       end
 
       def initializer(label, &block)

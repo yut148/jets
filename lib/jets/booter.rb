@@ -13,11 +13,12 @@ class Jets::Booter
       # Jets.eager_load_jets after auto_load paths configured in setup!
       # Jets.eager_load_jets is called to ensure that internal Turbines get loaded.
       eager_load_jets
-      turbine_initializers
+      run_turbines(:initializers)
       # Load configs after Turbine initializers so Turbines can defined some config options
       # and they are available in user's project environment configs.
       Jets.application.configs!
       app_initializers
+      run_turbines(:after_initializers)
       Jets.application.finish!
 
       # Eager load project code. Rather have user find out early than late.
@@ -56,6 +57,18 @@ class Jets::Booter
     def app_initializers
       Dir.glob("#{Jets.root}/config/initializers/**/*").each do |path|
         load path
+      end
+    end
+
+    # run_turbines(:initializers)
+    # run_turbines(:after_initializers)
+    def run_turbines(name)
+      Jets::Turbine.subclasses.each do |subclass|
+        hooks = subclass.send(name) || []
+        puts "hooks for #{name}: #{hooks.inspect}"
+        hooks.each do |label, block|
+          block.call(Jets.application)
+        end
       end
     end
 
