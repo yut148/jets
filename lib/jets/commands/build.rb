@@ -170,6 +170,9 @@ module Jets::Commands
     end
 
     # Add internal Jets controllers if they are being used
+    # TODO: Interesting, this eventually just used to generate handlers and controllers only.
+    # Maybe rename to make that clear.
+    # The copying of other internal files like views is done in builders/code_builder.rb copy_internal_jets_code
     def self.internal_app_files
       paths = []
       controllers = File.expand_path("../../internal/app/controllers/jets", __FILE__)
