@@ -35,22 +35,30 @@ module Jets
     end
 
     after_initializer "action_mailer.routes" do |app|
-      puts "mailer after_initialize drawing more routes"
+      puts "mailer after_initializer drawing more routes"
       app.routes.draw do
         get "jets/mailers", to: "jets/mailers#index"
         get "jets/mailers/*path", to: "jets/mailers#preview"
       end
     end
 
+    after_initializer "action_mailer.views" do |app|
+      puts "mailer.rb after_initializer action_mailer.views"
+      ActiveSupport.on_load :action_controller do
+        internal_views = File.expand_path("internal/app/views", File.dirname(__FILE__))
+        ActionController::Base.append_view_path(internal_views)
+      end
+    end
+
     # config.after_initialize do |app|
     #   options = app.config.action_mailer
-
+    #
     #   if options.show_previews
     #     app.routes.prepend do
     #       get "/rails/mailers"         => "rails/mailers#index", internal: true
     #       get "/rails/mailers/*path"   => "rails/mailers#preview", internal: true
     #     end
-
+    #
     #     if options.preview_path
     #       ActiveSupport::Dependencies.autoload_paths << options.preview_path
     #     end

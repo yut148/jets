@@ -1,0 +1,8 @@
+<% @previews.each do |preview| %>
+<h3><%= preview.preview_name.titleize %></h3>
+<ul>
+<% preview.emails.each do |email| %>
+<li><%= link_to "email", "/foo" %></li>
+<% end %>
+</ul>
+<% end %>
