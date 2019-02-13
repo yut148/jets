@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 class Jets::MailersController < Jets::Controller::Base # :nodoc:
-  # before_action :require_local!, unless: :show_previews?
-  # before_action :find_preview, :set_locale, only: :preview
   before_action :find_preview, only: [:preview]
+  before_action :set_locale, only: [:preview]
+  # TODO: allow multiple actions
+  # before_action :find_preview, :set_locale, only: :preview
 
+  # TODO: add helper_method support
   # helper_method :part_query, :locale_query
 
+  # TODO: content_security_policy
   # content_security_policy(false)
 
   def index
@@ -21,41 +24,25 @@ class Jets::MailersController < Jets::Controller::Base # :nodoc:
     # @preview.preview_name "user_mailer"
 
     if params[:path] == @preview.preview_name
-      puts "hi1"
       @page_title = "Mailer Previews for #{@preview.preview_name}"
       render action: "mailer"
     else
-      puts "hi2"
       @email_action = File.basename(params[:path])
 
-      puts "@preview #{@preview}"
-      puts "@email_action #{@email_action}"
-      puts "params #{params}"
-
       if @preview.email_exists?(@email_action)
-        puts "hi3"
         @email = @preview.call(@email_action, params)
 
         if params[:part]
           part_type = Mime::Type.lookup(params[:part])
 
-          puts "hi4"
           if part = find_part(part_type)
-            puts "hi5"
-            # response.content_type = part_type
-
             response.headers["Content-Type"] = params[:part]
-            result = part.respond_to?(:decoded) ? part.decoded : part
-            render plain: result
+            render plain: part.respond_to?(:decoded) ? part.decoded : part
           else
             raise AbstractController::ActionNotFound, "Email part '#{part_type}' not found in #{@preview.name}##{@email_action}"
           end
         else
-          puts "hi6"
-          # @part = find_preferred_part(request.format, Mime[:html], Mime[:text])
-          # render action: "email", layout: false, formats: %w[html]
           @part = find_preferred_part(Mime[:html], Mime[:text])
-          # puts "@part #{@part}"
           render :email, layout: false, formats: %w[html]
         end
       else

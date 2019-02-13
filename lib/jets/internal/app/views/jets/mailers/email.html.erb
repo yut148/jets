@@ -107,6 +107,16 @@
       <dd id="mime_type" data-mime-type="<%= part_query(@email.mime_type) %>"><%= @email.mime_type == 'text/html' ? 'HTML email' : 'plain-text email' %></dd>
     <% end %>
 
+    <% if I18n.available_locales.count > 1 %>
+      <dt>Locale:</dt>
+      <dd>
+        <select id="locale" onchange="refreshBody(true);">
+          <% I18n.available_locales.each do |locale| %>
+            <option <%= I18n.locale == locale ? 'selected' : '' %> value="<%= locale_query(locale) %>"><%= locale %></option>
+          <% end %>
+        </select>
+      </dd>
+    <% end %>
   </dl>
 </header>
 
@@ -120,30 +130,14 @@
     var part_param = part_select ?
       part_select.options[part_select.selectedIndex].value :
       document.querySelector('#mime_type').dataset.mimeType;
-    var fresh_location;
+    var fresh_location = '?part=' + part_param;
+    var doc = iframe.contentWindow.document;
 
-    fresh_location = '?part=' + part_param;
-
-    console.log("part_select ", part_select);
-    console.log("locale_select ", locale_select);
-    console.log("iframe ", iframe);
-    console.log("part_param ", part_param);
-    console.log("fresh_location ", fresh_location);
+    doc.open();
+    doc.write("Loading...");
+    doc.close();
 
     iframe.contentWindow.location = fresh_location;
-
-
-    // http://cloud9.tung.boltops.com:8888/jets/mailers/user_mailer/format=?text/html
-
-    // var url = location.pathname.replace(/\.(txt|html)$/, '');
-    // var format = /html/.test(part_param) ? '.html' : '.txt';
-    // var state_to_replace = locale_param ? (url + format + '?' + locale_param) : (url + format);
-
-    // if (reload) {
-    //   location.href = state_to_replace;
-    // } else if (history.replaceState) {
-    //   window.history.replaceState({}, '', state_to_replace);
-    // }
   }
 </script>
 
