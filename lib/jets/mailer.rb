@@ -12,7 +12,7 @@ module Jets
       options.default_url_options ||= {}
       options.default_url_options[:protocol] ||= "https"
       options.show_previews = Jets.env.development? if options.show_previews.nil?
-      options.preview_path ||= "#{Jets.root}/spec/mailers/previews" if options.show_previews
+      options.preview_path ||= "#{Jets.root}/app/previews" if options.show_previews
       options.view_paths ||= "#{Jets.root}/app/views"
 
       # TODO: Dont think Jets sets asset_host the same way
@@ -35,7 +35,7 @@ module Jets
     end
 
     after_initializer "action_mailer.routes" do |app|
-      puts "mailer after_initializer drawing more routes"
+      # puts "mailer after_initializer drawing more routes"
       app.routes.draw do
         get "jets/mailers", to: "jets/mailers#index"
         get "jets/mailers/*path", to: "jets/mailers#preview"
@@ -43,7 +43,7 @@ module Jets
     end
 
     after_initializer "action_mailer.views" do |app|
-      puts "mailer.rb after_initializer action_mailer.views"
+      # puts "mailer.rb after_initializer action_mailer.views"
       ActiveSupport.on_load :action_controller do
         internal_views = File.expand_path("internal/app/views", File.dirname(__FILE__))
         ActionController::Base.append_view_path(internal_views)

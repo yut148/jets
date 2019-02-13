@@ -65,7 +65,7 @@ class Jets::Booter
     def run_turbines(name)
       Jets::Turbine.subclasses.each do |subclass|
         hooks = subclass.send(name) || []
-        puts "hooks for #{name}: #{hooks.inspect}"
+        # puts "hooks for #{name}: #{hooks.inspect}"
         hooks.each do |label, block|
           block.call(Jets.application)
         end
