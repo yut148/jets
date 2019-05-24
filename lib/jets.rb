@@ -21,9 +21,15 @@ loader.logger = method(:puts)
 
 loader.ignore("#{__dir__}/jets/internal")
 
-# loader.push_dir("#{__dir__}/jets/internal/app/controllers")
-# loader.push_dir("#{__dir__}/jets/internal/app/helpers")
-# loader.push_dir("#{__dir__}/jets/internal/app/jobs")
+loader.push_dir("#{__dir__}/jets/internal/app/controllers")
+loader.push_dir("#{__dir__}/jets/internal/app/helpers")
+loader.push_dir("#{__dir__}/jets/internal/app/jobs")
+
+loader.ignore("#{__dir__}/jets/internal/app/jobs/jets/preheat_job.rb")
+loader.ignore("#{__dir__}/jets/controller/middleware/webpacker_setup.rb")
+loader.ignore("#{__dir__}/jets/builders/templates")
+
+
 
 loader.setup # ready!
 
@@ -87,4 +93,6 @@ $:.unshift("#{root}/vendor/rails/actionview/lib")
 
 Jets::Db # trigger autoload
 
+puts "eager_load start".color(:yellow)
 loader.eager_load
+puts "eager_load end".color(:yellow)
