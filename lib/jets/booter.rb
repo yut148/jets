@@ -11,7 +11,7 @@ class Jets::Booter
 
       Jets.application.setup!
       # eager_load_jets is called to ensure that internal Turbines get loaded after auto_load paths configured in setup!
-      eager_load_jets
+      # eager_load_jets
       run_turbines(:initializers)
       # Load configs after Turbine initializers so Turbines can defined some config options
       # and they are available in user's project environment configs.
@@ -21,7 +21,7 @@ class Jets::Booter
       Jets.application.finish!
 
       # Eager load project code. Rather have user find out early than late.
-      eager_load_app
+      # eager_load_app
 
       setup_db
       # build_middleware_stack # TODO: figure out how to build middleware during Jets.boot without breaking jets new and webpacker:install
@@ -167,6 +167,10 @@ class Jets::Booter
                       .camelize
         # special class mappings
         class_name = class_mappings(class_name)
+
+        puts "eager_load_jets path #{path}"
+        puts "eager_load_jets class_name #{class_name}"
+
         class_name.constantize # use constantize instead of require so dont have to worry about order.
       end
     end

@@ -6,55 +6,70 @@ require "active_support/dependencies"
 require "active_support/ordered_hash"
 require "active_support/ordered_options"
 require "fileutils"
-require "jets/camelizer"
-require "jets/version"
 require "memoist"
 require "rainbow/ext/string"
 require "zeitwerk"
+
+require "jets/camelizer"
+require "jets/inflector"
+require "jets/version"
+
+loader = Zeitwerk::Loader.for_gem
+
+loader.inflector = Jets::Inflector.new
+loader.logger = method(:puts)
+
+loader.ignore("#{__dir__}/jets/internal")
+
+# loader.push_dir("#{__dir__}/jets/internal/app/controllers")
+# loader.push_dir("#{__dir__}/jets/internal/app/helpers")
+# loader.push_dir("#{__dir__}/jets/internal/app/jobs")
+
+loader.setup # ready!
 
 module Jets
   RUBY_VERSION = "2.5.3"
   class Error < StandardError; end
 
-  autoload :Application, "jets/application"
-  autoload :AwsInfo, "jets/aws_info"
-  autoload :AwsServices, "jets/aws_services"
-  autoload :Booter, 'jets/booter'
-  autoload :Builders, 'jets/builders'
-  autoload :Call, "jets/call"
-  autoload :Cfn, 'jets/cfn'
-  autoload :CLI, "jets/cli"
-  autoload :Commands, "jets/commands"
-  autoload :Controller, 'jets/controller'
-  autoload :Core, "jets/core"
-  autoload :Db, 'jets/db'
-  autoload :Dotenv, 'jets/dotenv'
-  autoload :Erb, "jets/erb"
-  autoload :Generator, "jets/generator"
-  autoload :Inflections, "jets/inflections"
-  autoload :IO, "jets/io"
-  autoload :Job, 'jets/job'
-  autoload :Klass, 'jets/klass'
-  autoload :Lambda, 'jets/lambda'
-  autoload :Logger, "jets/logger"
-  autoload :Mailer, "jets/mailer"
-  autoload :Mega, "jets/mega"
-  autoload :Middleware, "jets/middleware"
-  autoload :Naming, 'jets/naming'
-  autoload :PolyFun, 'jets/poly_fun'
-  autoload :Preheat, "jets/preheat"
-  autoload :Processors, 'jets/processors'
-  autoload :RackServer, "jets/rack_server"
-  autoload :Rdoc, "jets/rdoc"
-  autoload :Resource, "jets/resource"
-  autoload :Route, "jets/route"
-  autoload :Router, "jets/router"
-  autoload :Rule, 'jets/rule'
-  autoload :Stack, "jets/stack"
-  autoload :TmpLoader, "jets/tmp_loader"
-  autoload :Turbine, 'jets/turbine'
-  autoload :Turbo, 'jets/turbo'
-  autoload :Util, "jets/util"
+  # autoload :Application, "jets/application"
+  # autoload :AwsInfo, "jets/aws_info"
+  # autoload :AwsServices, "jets/aws_services"
+  # autoload :Booter, 'jets/booter'
+  # autoload :Builders, 'jets/builders'
+  # autoload :Call, "jets/call"
+  # autoload :Cfn, 'jets/cfn'
+  # autoload :CLI, "jets/cli"
+  # autoload :Commands, "jets/commands"
+  # autoload :Controller, 'jets/controller'
+  # autoload :Core, "jets/core"
+  # autoload :Db, 'jets/db'
+  # autoload :Dotenv, 'jets/dotenv'
+  # autoload :Erb, "jets/erb"
+  # autoload :Generator, "jets/generator"
+  # autoload :Inflections, "jets/inflections"
+  # autoload :IO, "jets/io"
+  # autoload :Job, 'jets/job'
+  # autoload :Klass, 'jets/klass'
+  # autoload :Lambda, 'jets/lambda'
+  # autoload :Logger, "jets/logger"
+  # autoload :Mailer, "jets/mailer"
+  # autoload :Mega, "jets/mega"
+  # autoload :Middleware, "jets/middleware"
+  # autoload :Naming, 'jets/naming'
+  # autoload :PolyFun, 'jets/poly_fun'
+  # autoload :Preheat, "jets/preheat"
+  # autoload :Processors, 'jets/processors'
+  # autoload :RackServer, "jets/rack_server"
+  # autoload :Rdoc, "jets/rdoc"
+  # autoload :Resource, "jets/resource"
+  # autoload :Route, "jets/route"
+  # autoload :Router, "jets/router"
+  # autoload :Rule, 'jets/rule'
+  # autoload :Stack, "jets/stack"
+  # autoload :TmpLoader, "jets/tmp_loader"
+  # autoload :Turbine, 'jets/turbine'
+  # autoload :Turbo, 'jets/turbo'
+  # autoload :Util, "jets/util"
 
   extend Core # root, logger, etc
 end
@@ -71,3 +86,5 @@ $:.unshift("#{root}/vendor/rails/actionview/lib")
 # will require action_controller, action_pack, etc later when needed
 
 Jets::Db # trigger autoload
+
+loader.eager_load

@@ -189,7 +189,7 @@ class Jets::Application
 
   def setup_auto_load_paths
     autoload_paths = config.autoload_paths + config.extra_autoload_paths
-    autoload_paths += internal_autoload_paths # internal_autoload_paths are last
+    # autoload_paths += internal_autoload_paths # internal_autoload_paths are last
     autoload_paths.each do |path|
       next unless File.exist?(path)
       Jets.loader.push_dir(path)

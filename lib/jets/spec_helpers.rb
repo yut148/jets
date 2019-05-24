@@ -52,6 +52,7 @@ module Jets
   end
 end
 
+require "rspec"
 RSpec.configure do |c|
   c.include Jets::SpecHelpers
 end

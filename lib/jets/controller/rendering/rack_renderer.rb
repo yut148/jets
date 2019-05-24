@@ -224,6 +224,10 @@ module Jets::Controller::Rendering
         Dir.glob(expression).each do |path|
           next unless File.file?(path)
           class_name = path.sub("#{project_root}/app/helpers/","").sub(/\.rb/,'')
+
+          puts "find_app_helper_classes_from path #{path}"
+          puts "find_app_helper_classes_from class_name #{class_name}"
+
           unless class_name == "application_helper"
             klasses << class_name.classify.constantize # autoload
           end
