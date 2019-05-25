@@ -33,18 +33,12 @@ loader.ignore("#{__dir__}/core_ext/kernel")
 # eager loading builders/rackup_wrappers - will cause the program to exit
 
 dirs = %w[
-  aws_services
   builders/rackup_wrappers
   builders/reconfigure_rails
   commands
-  controller
   core_ext
   generator
   internal
-  job
-  lambda
-  mega
-  middleware
   overrides
   poly_fun
   processors
@@ -52,6 +46,7 @@ dirs = %w[
   router
   rule
   spec_helpers
+  spec_helpers.rb
   stack
   turbo
 
