@@ -30,10 +30,12 @@ loader.ignore("#{__dir__}/jets/controller/middleware/webpacker_setup.rb")
 loader.ignore("#{__dir__}/jets/builders/templates")
 loader.ignore("#{__dir__}/core_ext/kernel")
 
+# eager loading builders/rackup_wrappers - will cause the program to exit
+
 dirs = %w[
   aws_services
-  builders
-  cfn
+  builders/rackup_wrappers
+  builders/reconfigure_rails
   commands
   controller
   core_ext
