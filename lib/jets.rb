@@ -30,6 +30,38 @@ loader.ignore("#{__dir__}/jets/controller/middleware/webpacker_setup.rb")
 loader.ignore("#{__dir__}/jets/builders/templates")
 loader.ignore("#{__dir__}/core_ext/kernel")
 
+dirs = %w[
+  aws_services
+  builders
+  cfn
+  commands
+  controller
+  core_ext
+  generator
+  internal
+  job
+  lambda
+  mega
+  middleware
+  overrides
+  poly_fun
+  processors
+  resource
+  router
+  rule
+  spec_helpers
+  stack
+  turbo
+
+  cli
+  commands
+  spec
+  mailer.rb
+]
+dirs.each do |dir|
+  loader.ignore("#{__dir__}/jets/#{dir}")
+end
+
 loader.setup # ready!
 
 module Jets
@@ -52,5 +84,5 @@ $:.unshift("#{root}/vendor/rails/actionview/lib")
 Jets::Db # trigger autoload
 
 puts "eager_load start".color(:yellow)
-# loader.eager_load
+loader.eager_load
 puts "eager_load end".color(:yellow)
