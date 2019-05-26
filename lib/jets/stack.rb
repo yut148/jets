@@ -1,15 +1,5 @@
 module Jets
   class Stack
-    autoload :Builder, 'jets/stack/builder'
-    autoload :Definition, 'jets/stack/definition' # Registration and definitions
-    autoload :Depends, 'jets/stack/depends'
-    autoload :Function, 'jets/stack/function'
-    autoload :Main, 'jets/stack/main'
-    autoload :Output, 'jets/stack/output'
-    autoload :Parameter, 'jets/stack/parameter'
-    autoload :Resource, 'jets/stack/resource'
-    autoload :S3Event, 'jets/stack/s3_event'
-
     include Main::Dsl
     include Parameter::Dsl
     include Output::Dsl

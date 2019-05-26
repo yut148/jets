@@ -10,9 +10,4 @@
 #
 # Overview diagram : http://bit.ly/2zQeoF3
 module Jets::Lambda
-  autoload :Dsl, "jets/lambda/dsl"
-  autoload :FunctionConstructor, "jets/lambda/function_constructor"
-  autoload :Function, "jets/lambda/function"
-  autoload :Functions, "jets/lambda/functions"
-  autoload :Task, "jets/lambda/task"
 end

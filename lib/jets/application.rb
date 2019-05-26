@@ -4,7 +4,6 @@ require "rack"
 class Jets::Application
   include Singleton
   extend Memoist
-  autoload :Middleware, "jets/middleware"
   include Jets::Middleware
 
   def configure(&block)

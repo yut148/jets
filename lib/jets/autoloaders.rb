@@ -59,7 +59,6 @@ module Jets
           builders/reconfigure_rails
           builders/templates
           cli
-          commands
           controller/middleware/webpacker_setup.rb
           core_ext
           generator
@@ -69,13 +68,11 @@ module Jets
           overrides
           poly_fun
           processors
-          resource
           router
           rule
           spec
           spec_helpers
           spec_helpers.rb
-          stack
           turbo
         ]
       end

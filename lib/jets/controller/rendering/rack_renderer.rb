@@ -248,4 +248,4 @@ module Jets::Controller::Rendering
   end
 end
 
-Jets::Controller::Rendering::RackRenderer.setup!
+# Jets::Controller::Rendering::RackRenderer.setup!

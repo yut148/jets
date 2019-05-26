@@ -22,6 +22,7 @@ class Jets::Booter
 
       # Eager load project code. Rather have user find out early than late.
       # eager_load_app
+      Jets::Controller::Rendering::RackRenderer.setup!
 
       setup_db
       # build_middleware_stack # TODO: figure out how to build middleware during Jets.boot without breaking jets new and webpacker:install
