@@ -71,7 +71,6 @@ module Jets
           mailer.rb
           overrides
           poly_fun
-          processors
           router
           rule
           spec
