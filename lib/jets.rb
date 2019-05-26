@@ -35,6 +35,6 @@ Jets::Autoloaders.once.preload("#{__dir__}/jets/db.rb") # required for booter.rb
 
 # puts "eager_load start".color(:yellow)
 # TODO: only load this on test
-puts Jets::Autoloaders.once.dirs
+# puts Jets::Autoloaders.once.dirs
 Jets::Autoloaders.once.eager_load
 # puts "eager_load end".color(:yellow)
