@@ -201,7 +201,7 @@ module Jets::Controller::Rendering
         ActiveSupport.on_load :action_view do
           include ApplicationHelper # include first
           app_helper_classes.each do |helper_class|
-            # include helper_class
+            include helper_class
           end
         end
 
@@ -225,11 +225,8 @@ module Jets::Controller::Rendering
           next unless File.file?(path)
           class_name = path.sub("#{project_root}/app/helpers/","").sub(/\.rb/,'')
 
-          puts "find_app_helper_classes_from path #{path}"
-          puts "find_app_helper_classes_from class_name #{class_name}"
-
           unless class_name == "application_helper"
-            # klasses << class_name.classify.constantize # autoload
+            klasses << class_name.classify.constantize # autoload
           end
         end
         klasses
@@ -251,4 +248,4 @@ module Jets::Controller::Rendering
   end
 end
 
-# Jets::Controller::Rendering::RackRenderer.setup!
+Jets::Controller::Rendering::RackRenderer.setup!
