@@ -35,13 +35,9 @@ module Jets
           loader.inflector = Inflector.new
 
           loader.push_dir("#{__dir__}/..")
-          paths = %w[
-            internal/app/controllers
-            internal/app/helpers
-            internal/app/jobs
-          ]
-          paths.each do |path|
+          internal_app_paths.each do |path|
             loader.push_dir("#{__dir__}/#{path}")
+            loader.do_not_eager_load("#{__dir__}/#{path}")
           end
 
           ignore_paths.each do |path|
@@ -52,6 +48,14 @@ module Jets
       memoize :once
 
     private
+      def internal_app_paths
+        %w[
+          internal/app/controllers
+          internal/app/helpers
+          internal/app/jobs
+        ]
+      end
+
       def ignore_paths
         # eager loading builders/rackup_wrappers - will cause the program to exit
         %w[
@@ -64,7 +68,6 @@ module Jets
           core_ext
           generator
           internal
-          internal/app/jobs/jets/preheat_job.rb
           mailer.rb
           overrides
           poly_fun
