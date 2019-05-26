@@ -59,6 +59,7 @@ module Jets
           builders/reconfigure_rails
           builders/templates
           cli
+          commands/templates
           controller/middleware/webpacker_setup.rb
           core_ext
           generator
