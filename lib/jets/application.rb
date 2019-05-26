@@ -188,14 +188,15 @@ class Jets::Application
   end
 
   def setup_auto_load_paths
+    loader = Jets::Autoloaders.main
     autoload_paths = config.autoload_paths + config.extra_autoload_paths
     # autoload_paths += internal_autoload_paths # internal_autoload_paths are last
     autoload_paths.each do |path|
       next unless File.exist?(path)
-      Jets.loader.push_dir(path)
+      loader.push_dir(path)
     end
-    Jets.loader.enable_reloading if Jets.env.development?
-    Jets.loader.setup
+    loader.enable_reloading if Jets.env.development?
+    loader.setup
   end
 
   # Essentially folders under app folder will be the default_autoload_paths. Example:

@@ -10,56 +10,9 @@ require "memoist"
 require "rainbow/ext/string"
 require "zeitwerk"
 
-require "jets/camelizer"
-require "jets/inflector"
-require "jets/version"
-
-loader = Zeitwerk::Loader.for_gem
-
-loader.inflector = Jets::Inflector.new
-loader.logger = method(:puts)
-
-loader.ignore("#{__dir__}/jets/internal")
-
-loader.push_dir("#{__dir__}/jets/internal/app/controllers")
-loader.push_dir("#{__dir__}/jets/internal/app/helpers")
-loader.push_dir("#{__dir__}/jets/internal/app/jobs")
-
-loader.ignore("#{__dir__}/jets/internal/app/jobs/jets/preheat_job.rb")
-loader.ignore("#{__dir__}/jets/controller/middleware/webpacker_setup.rb")
-loader.ignore("#{__dir__}/jets/builders/templates")
-loader.ignore("#{__dir__}/core_ext/kernel")
-
-# eager loading builders/rackup_wrappers - will cause the program to exit
-
-dirs = %w[
-  builders/rackup_wrappers
-  builders/reconfigure_rails
-  commands
-  core_ext
-  generator
-  internal
-  overrides
-  poly_fun
-  processors
-  resource
-  router
-  rule
-  spec_helpers
-  spec_helpers.rb
-  stack
-  turbo
-
-  cli
-  commands
-  spec
-  mailer.rb
-]
-dirs.each do |dir|
-  loader.ignore("#{__dir__}/jets/#{dir}")
-end
-
-loader.setup # ready!
+require "jets/autoloaders"
+Jets::Autoloaders.log! if ENV["JETS_AUTOLOAD_LOG"]
+Jets::Autoloaders.once.setup
 
 module Jets
   RUBY_VERSION = "2.5.3"
@@ -69,7 +22,7 @@ end
 
 require "jets/core_ext/kernel"
 
-root = File.expand_path("..", File.dirname(__FILE__))
+root = File.expand_path("..", __dir__)
 
 $:.unshift("#{root}/vendor/jets-gems/lib")
 require "jets-gems"
@@ -78,8 +31,9 @@ $:.unshift("#{root}/vendor/rails/actionpack/lib")
 $:.unshift("#{root}/vendor/rails/actionview/lib")
 # will require action_controller, action_pack, etc later when needed
 
-Jets::Db # trigger autoload
+Jets::Autoloaders.once.preload("#{__dir__}/jets/db.rb") # required for booter.rb:112: setup_db
 
-puts "eager_load start".color(:yellow)
-loader.eager_load
-puts "eager_load end".color(:yellow)
+# puts "eager_load start".color(:yellow)
+# TODO: only load this on test
+Jets::Autoloaders.once.eager_load
+# puts "eager_load end".color(:yellow)
